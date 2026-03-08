@@ -94,40 +94,40 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WORK-01 | — | Pending |
-| WORK-02 | — | Pending |
-| WORK-03 | — | Pending |
-| WORK-04 | — | Pending |
-| REVW-01 | — | Pending |
-| REVW-02 | — | Pending |
-| REVW-03 | — | Pending |
-| REVW-04 | — | Pending |
-| GUID-01 | — | Pending |
-| GUID-02 | — | Pending |
-| GUID-03 | — | Pending |
-| RULE-01 | — | Pending |
-| RULE-02 | — | Pending |
-| RULE-03 | — | Pending |
-| RULE-04 | — | Pending |
-| CLAR-01 | — | Pending |
-| CLAR-02 | — | Pending |
-| CLAR-03 | — | Pending |
-| CLAR-04 | — | Pending |
-| CLAR-05 | — | Pending |
-| CLAR-06 | — | Pending |
-| CLAR-07 | — | Pending |
-| SAVE-01 | — | Pending |
-| SAVE-02 | — | Pending |
-| A11Y-01 | — | Pending |
-| A11Y-02 | — | Pending |
-| PERF-01 | — | Pending |
-| PERF-02 | — | Pending |
+| WORK-01 | Phase 1 | Pending |
+| WORK-02 | Phase 1 | Pending |
+| WORK-03 | Phase 2 | Pending |
+| WORK-04 | Phase 2 | Pending |
+| REVW-01 | Phase 4 | Pending |
+| REVW-02 | Phase 3 | Pending |
+| REVW-03 | Phase 4 | Pending |
+| REVW-04 | Phase 6 | Pending |
+| GUID-01 | Phase 4 | Pending |
+| GUID-02 | Phase 4 | Pending |
+| GUID-03 | Phase 4 | Pending |
+| RULE-01 | Phase 5 | Pending |
+| RULE-02 | Phase 5 | Pending |
+| RULE-03 | Phase 5 | Pending |
+| RULE-04 | Phase 7 | Pending |
+| CLAR-01 | Phase 3 | Pending |
+| CLAR-02 | Phase 3 | Pending |
+| CLAR-03 | Phase 3 | Pending |
+| CLAR-04 | Phase 3 | Pending |
+| CLAR-05 | Phase 4 | Pending |
+| CLAR-06 | Phase 3 | Pending |
+| CLAR-07 | Phase 5 | Pending |
+| SAVE-01 | Phase 7 | Pending |
+| SAVE-02 | Phase 7 | Pending |
+| A11Y-01 | Phase 6 | Pending |
+| A11Y-02 | Phase 6 | Pending |
+| PERF-01 | Phase 1 | Pending |
+| PERF-02 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 28 total
-- Mapped to phases: 0
-- Unmapped: 28 ⚠️
+- Mapped to phases: 28
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-08*
-*Last updated: 2026-03-08 after initial definition*
+*Last updated: 2026-03-08 after roadmap creation*
