@@ -43,7 +43,10 @@ Plans:
   1. User can continue editing while analysis runs without the text workspace freezing.
   2. User sees refreshed analysis shortly after pausing typing on typical documents.
   3. User can change text and trigger a fresh analysis without reloading the page or losing the current draft.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] `02-01-PLAN.md` - Build the background worker protocol, client, and debounced scheduler for local analysis.
+- [ ] `02-02-PLAN.md` - Integrate automatic refresh, live analysis states, and end-to-end verification into the workspace UI.
 
 ### Phase 3: Core Findings
 **Goal**: Users can receive a trustworthy first pass of prioritized technical-writing findings.
@@ -106,7 +109,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Local Workspace Foundation | 2/2 | Complete | 2026-03-09 |
-| 2. Responsive Analysis Loop | 0/TBD | Not started | - |
+| 2. Responsive Analysis Loop | 0/2 | Planned | - |
 | 3. Core Findings | 0/TBD | Not started | - |
 | 4. Contextual Review and Guidance | 0/TBD | Not started | - |
 | 5. Rule Tuning and Custom Detection | 0/TBD | Not started | - |
