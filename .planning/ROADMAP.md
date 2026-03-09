@@ -12,7 +12,7 @@ This roadmap turns the narrowed boundary into seven dependency-aware phases: est
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Local Workspace Foundation** - Fast static shell for one local text source and no-cloud analysis entry.
+- [x] **Phase 1: Local Workspace Foundation** - Fast static shell for one local text source and no-cloud analysis entry. (completed 2026-03-09)
 - [ ] **Phase 2: Responsive Analysis Loop** - Background browser-local analysis refreshes without blocking writing.
 - [ ] **Phase 3: Core Findings** - Initial rule pack returns prioritized technical-writing issues.
 - [ ] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits.
@@ -30,7 +30,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. User can open the static site and see the app ready to analyze within 3 seconds on supported devices.
   2. User can paste, type, or replace one text source inside a single browser workspace.
   3. User can start analysis of the current text without accounts, uploads, or any step that sends text off the website.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [x] `01-01-PLAN.md` - Scaffold the static React shell, shared styling, and fast test/build pipeline.
+- [x] `01-02-PLAN.md` - Build the single-text workspace and browser-local analysis entry flow.
 
 ### Phase 2: Responsive Analysis Loop
 **Goal**: Users can keep writing while local analysis refreshes in the background.
@@ -102,7 +105,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Local Workspace Foundation | 0/TBD | Not started | - |
+| 1. Local Workspace Foundation | 2/2 | Complete | 2026-03-09 |
 | 2. Responsive Analysis Loop | 0/TBD | Not started | - |
 | 3. Core Findings | 0/TBD | Not started | - |
 | 4. Contextual Review and Guidance | 0/TBD | Not started | - |

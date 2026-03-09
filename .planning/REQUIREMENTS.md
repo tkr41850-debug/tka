@@ -9,8 +9,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Workspace
 
-- [ ] **WORK-01**: User can paste, type, or replace one text source in a single browser workspace.
-- [ ] **WORK-02**: User can analyze the current text without the app sending that text off the website.
+- [x] **WORK-01**: User can paste, type, or replace one text source in a single browser workspace.
+- [x] **WORK-02**: User can analyze the current text without the app sending that text off the website.
 - [ ] **WORK-03**: User can keep editing while analysis runs in the background.
 - [ ] **WORK-04**: User can trigger a fresh analysis after text changes without reloading the page.
 
@@ -56,7 +56,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Responsiveness
 
-- [ ] **PERF-01**: User sees the app ready to analyze within 3 seconds on supported devices.
+- [x] **PERF-01**: User sees the app ready to analyze within 3 seconds on supported devices.
 - [ ] **PERF-02**: User sees analysis refresh shortly after pausing typing on typical documents.
 
 ## v2 Requirements
@@ -94,8 +94,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WORK-01 | Phase 1 | Pending |
-| WORK-02 | Phase 1 | Pending |
+| WORK-01 | Phase 1 | Complete |
+| WORK-02 | Phase 1 | Complete |
 | WORK-03 | Phase 2 | Pending |
 | WORK-04 | Phase 2 | Pending |
 | REVW-01 | Phase 4 | Pending |
@@ -120,7 +120,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SAVE-02 | Phase 7 | Pending |
 | A11Y-01 | Phase 6 | Pending |
 | A11Y-02 | Phase 6 | Pending |
-| PERF-01 | Phase 1 | Pending |
+| PERF-01 | Phase 1 | Complete |
 | PERF-02 | Phase 2 | Pending |
 
 **Coverage:**
@@ -130,4 +130,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-08*
-*Last updated: 2026-03-08 after roadmap creation*
+*Last updated: 2026-03-09 after Phase 1 execution and verification*

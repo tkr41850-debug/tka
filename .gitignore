@@ -4,3 +4,5 @@ FinalSpecDraft.md
 .vscode/
 .opencode/
 node_modules/
+dist/
+coverage/
