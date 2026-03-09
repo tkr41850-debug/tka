@@ -1,4 +1,4 @@
-export type AnalysisState = 'fresh' | 'stale';
+export type AnalysisState = 'stale' | 'queued' | 'running' | 'fresh' | 'error';
 
 export type LocalSnapshot = {
   characters: number;
