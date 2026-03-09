@@ -16,12 +16,10 @@ class MockWorker {
   readonly postedMessages: AnalysisJobRequest[] = [];
   terminated = false;
 
-  private readonly listeners: {
-    [Key in keyof WorkerEvents]: Array<(event: WorkerEvents[Key]) => void>;
-  } = {
-    error: [],
-    message: [],
-    messageerror: [],
+  private readonly listeners = {
+    error: [] as Array<(event: ErrorEvent) => void>,
+    message: [] as Array<(event: MessageEvent<AnalysisJobResponse>) => void>,
+    messageerror: [] as Array<(event: MessageEvent) => void>,
   };
 
   postMessage(message: AnalysisJobRequest) {
@@ -33,11 +31,37 @@ class MockWorker {
   }
 
   addEventListener<Key extends keyof WorkerEvents>(type: Key, listener: (event: WorkerEvents[Key]) => void) {
-    this.listeners[type].push(listener);
+    switch (type) {
+      case 'error':
+        this.listeners.error.push(listener as (event: ErrorEvent) => void);
+        break;
+      case 'message':
+        this.listeners.message.push(listener as (event: MessageEvent<AnalysisJobResponse>) => void);
+        break;
+      case 'messageerror':
+        this.listeners.messageerror.push(listener as (event: MessageEvent) => void);
+        break;
+    }
   }
 
   removeEventListener<Key extends keyof WorkerEvents>(type: Key, listener: (event: WorkerEvents[Key]) => void) {
-    this.listeners[type] = this.listeners[type].filter((registeredListener) => registeredListener !== listener);
+    switch (type) {
+      case 'error':
+        this.listeners.error = this.listeners.error.filter(
+          (registeredListener) => registeredListener !== (listener as (event: ErrorEvent) => void),
+        );
+        break;
+      case 'message':
+        this.listeners.message = this.listeners.message.filter(
+          (registeredListener) => registeredListener !== (listener as (event: MessageEvent<AnalysisJobResponse>) => void),
+        );
+        break;
+      case 'messageerror':
+        this.listeners.messageerror = this.listeners.messageerror.filter(
+          (registeredListener) => registeredListener !== (listener as (event: MessageEvent) => void),
+        );
+        break;
+    }
   }
 
   dispatchMessage(message: AnalysisJobResponse) {
