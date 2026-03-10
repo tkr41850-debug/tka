@@ -142,3 +142,12 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 5. Rule Tuning and Custom Detection | 4/4 | Complete | 2026-03-10 |
 | 6. Trustworthy First-Run Access | 4/4 | Complete | 2026-03-10 |
 | 7. Local Continuity and Presets | 4/4 | Complete | 2026-03-10 |
+
+### Phase 8: CI and GitHub Pages Deployment
+
+**Goal:** [To be planned]
+**Depends on:** Phase 7
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 8 to break down)

@@ -65,6 +65,10 @@ Recent decisions affecting current work:
 - [Phase 7] Keep draft recovery opt-in and require an explicit restore-or-discard decision before replacing the current workspace.
 - [Phase 7] Reuse normalized analysis settings for saved presets so preset apply stays aligned with live analysis behavior.
 
+### Roadmap Evolution
+
+- Phase 8 added: CI and GitHub Pages Deployment
+
 ### Pending Todos
 
 - Prepare Phase 7 verification/closeout artifacts now that local continuity and presets are complete.
