@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import type { DraftFinding, FindingSuggestion } from './features/analysis/types';
+import type { AnalysisSettings, AnalysisRuleId, DraftFinding, FindingSuggestion } from './features/analysis/types';
 import { sampleDraft } from './features/workspace/data/sampleDraft';
 import { WorkspaceEditor } from './features/workspace/components/WorkspaceEditor';
 import { ReviewDetailPanel } from './features/workspace/components/ReviewDetailPanel';
+import { RuleSettingsPanel } from './features/workspace/components/RuleSettingsPanel';
 import { WorkspaceSnapshot } from './features/workspace/components/WorkspaceSnapshot';
 import { analyzeDraft } from './features/analysis/lib/analyzeDraft';
+import { DEFAULT_ANALYSIS_SETTINGS } from './features/analysis/lib/defaultAnalysisSettings';
+import { normalizeAnalysisSettings } from './features/analysis/lib/normalizeAnalysisSettings';
 import type { AnalysisState } from './features/workspace/types';
 import { getReadyLatencyMs } from './lib/bootMetrics';
 import { createAnalysisWorkerClient } from './features/analysis/lib/createAnalysisWorkerClient';
@@ -18,7 +21,8 @@ import {
 
 export default function App() {
   const [draft, setDraft] = useState(sampleDraft);
-  const [analysis, setAnalysis] = useState(() => analyzeDraft(sampleDraft));
+  const [analysisSettings, setAnalysisSettings] = useState<AnalysisSettings>(() => DEFAULT_ANALYSIS_SETTINGS);
+  const [analysis, setAnalysis] = useState(() => analyzeDraft(sampleDraft, DEFAULT_ANALYSIS_SETTINGS));
   const [analysisState, setAnalysisState] = useState<AnalysisState>('fresh');
   const [activeFindingId, setActiveFindingId] = useState<string | null>(null);
   const [pendingSelection, setPendingSelection] = useState<RewriteSelection | null>(null);
@@ -48,14 +52,24 @@ export default function App() {
     };
   }, []);
 
-  function queueDraftAnalysis(nextDraft: string) {
+  function queueDraftAnalysis(nextDraft: string, nextSettings = analysisSettings) {
     setDraft(nextDraft);
-    schedulerRef.current?.queue(nextDraft);
+    schedulerRef.current?.queue(nextDraft, nextSettings);
   }
 
-  function flushDraftAnalysis(nextDraft: string) {
+  function flushDraftAnalysis(nextDraft: string, nextSettings = analysisSettings) {
     setDraft(nextDraft);
-    void schedulerRef.current?.flush(nextDraft);
+    void schedulerRef.current?.flush(nextDraft, nextSettings);
+  }
+
+  function updateAnalysisSettings(updater: (current: AnalysisSettings) => AnalysisSettings) {
+    setUndoRewrite(null);
+    setPendingSelection(null);
+    setAnalysisSettings((current) => {
+      const nextSettings = normalizeAnalysisSettings(updater(current));
+      schedulerRef.current?.queue(draft, nextSettings);
+      return nextSettings;
+    });
   }
 
   function selectFinding(nextFindingId: string | null) {
@@ -84,7 +98,7 @@ export default function App() {
   }
 
   function handleAnalyze() {
-    void schedulerRef.current?.flush(draft);
+    void schedulerRef.current?.flush(draft, analysisSettings);
   }
 
   function handleLoadSample() {
@@ -114,7 +128,7 @@ export default function App() {
     setUndoRewrite(result.undoSnapshot);
     setPendingSelection(result.selection);
     setActiveFindingId(null);
-    flushDraftAnalysis(result.draft);
+    flushDraftAnalysis(result.draft, analysisSettings);
   }
 
   function handleUndoRewrite() {
@@ -126,7 +140,41 @@ export default function App() {
     setPendingSelection(restored.selection);
     setActiveFindingId(undoRewrite.findingId);
     setUndoRewrite(null);
-    flushDraftAnalysis(restored.draft);
+    flushDraftAnalysis(restored.draft, analysisSettings);
+  }
+
+  function handleToggleRule(ruleId: AnalysisRuleId, enabled: boolean) {
+    updateAnalysisSettings((current) => ({
+      ...current,
+      enabledRules: {
+        ...current.enabledRules,
+        [ruleId]: enabled,
+      },
+    }));
+  }
+
+  function handleThresholdChange(threshold: keyof AnalysisSettings['thresholds'], value: number) {
+    updateAnalysisSettings((current) => ({
+      ...current,
+      thresholds: {
+        ...current.thresholds,
+        [threshold]: value,
+      },
+    }));
+  }
+
+  function handleAddPhrase(phrase: string) {
+    updateAnalysisSettings((current) => ({
+      ...current,
+      customBannedPhrases: [...current.customBannedPhrases, phrase],
+    }));
+  }
+
+  function handleRemovePhrase(phrase: string) {
+    updateAnalysisSettings((current) => ({
+      ...current,
+      customBannedPhrases: current.customBannedPhrases.filter((candidate) => candidate !== phrase),
+    }));
   }
 
   useEffect(() => {
@@ -138,14 +186,14 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="hero-panel panel">
-        <p className="eyebrow">Phase 4 / Contextual Review and Guidance</p>
+          <p className="eyebrow">Phase 5 / Rule Tuning and Custom Detection</p>
         <div className="hero-copy">
           <div>
             <h1>Technical Writing Assistant</h1>
             <p className="hero-text">
-              Inspect each issue in place, jump straight to the flagged span, and apply supported local rewrites
-              without leaving the textarea workflow or sending text off-device.
-            </p>
+               Tune the active rule pack, retune thresholds, and add in-session banned phrases while every
+               background review stays local to this browser.
+             </p>
           </div>
 
           <div className="hero-badges" aria-label="foundation status">
@@ -196,7 +244,17 @@ export default function App() {
             analysisState={analysisState}
             readyMs={readyMs}
             activeFindingId={activeFindingId}
+            settings={analysisSettings}
             onSelectFinding={selectFinding}
+          />
+
+          <RuleSettingsPanel
+            settings={analysisSettings}
+            analysisState={analysisState}
+            onToggleRule={handleToggleRule}
+            onThresholdChange={handleThresholdChange}
+            onAddPhrase={handleAddPhrase}
+            onRemovePhrase={handleRemovePhrase}
           />
 
           <ReviewDetailPanel

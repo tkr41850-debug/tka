@@ -5,16 +5,16 @@
 See: `.planning/PROJECT.md` (updated 2026-03-08)
 
 **Core value:** Users can paste or type text into a single web page and immediately get useful, local-only feedback that helps them write more clearly.
-**Current focus:** Phase 4 - Contextual Review and Guidance
+**Current focus:** Phase 6 - Trustworthy First-Run Access
 
 ## Current Position
 
-Phase: 4 of 7 (Contextual Review and Guidance)
-Plan: 3 of 3 in current phase
-Status: Phase 4 planned - ready for execution
-Last activity: 2026-03-10 - Planned Phase 4 contextual review work
+Phase: 6 of 7 (Trustworthy First-Run Access)
+Plan: 0 of TBD in current phase
+Status: Phase 5 executed - ready for Phase 6 planning
+Last activity: 2026-03-10 - Executed Phase 5 rule tuning and custom detection work
 
-Progress: [#####-----] 43%
+Progress: [#######---] 71%
 
 ## Performance Metrics
 
@@ -30,6 +30,7 @@ Progress: [#####-----] 43%
 | 1 | 2 | manual session | manual session |
 | 2 | 2 | 19 min | 9.5 min |
 | 3 | 3 | 33 min | 11 min |
+| 5 | 4 | current session | current session |
 
 **Recent Trend:**
 - Last 5 plans: 02-01, 02-02, 03-01, 03-02, 03-03
@@ -60,17 +61,17 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Execute Phase 4 contextual review work on top of the now-live prioritized findings list.
+- Plan Phase 6 trustworthy first-run access on top of the live contextual review and rule tuning workflow.
 
 ### Blockers/Concerns
 
 - [Phase 2] Validate whether the 300 ms starting debounce still feels fast on long drafts once worker wiring is live.
-- [Phase 4] Inline highlight and issue-navigation behavior still needs a low-friction interaction model that preserves trust.
+- [Phase 6] Tutorial, accessibility, and per-warning dismissal behavior still need a low-friction trust model.
 - [Phase 7] Recovery policy should stay explicit so local draft restore does not surprise privacy-sensitive users.
 - [Future] Optional WASM remains out of v1 unless performance measurements justify it.
 
 ## Session Continuity
 
 Last session: 2026-03-10 07:15
-Stopped at: Completed `03-core-findings`
+Stopped at: Completed `05-rule-tuning-and-custom-detection`
 Resume file: `.planning/ROADMAP.md`

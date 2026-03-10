@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { analyzeDraft } from './analyzeDraft';
+import { DEFAULT_ANALYSIS_SETTINGS } from './defaultAnalysisSettings';
 
 describe('analyzeDraft', () => {
   it('returns no findings for a clean draft', () => {
@@ -69,6 +70,45 @@ describe('analyzeDraft', () => {
           isAutoApplicable: true,
         },
       ],
+    });
+  });
+
+  it('respects rule toggles and custom thresholds', () => {
+    const draft = [
+      'This sentence intentionally keeps going so it crosses the default limit with many extra words that make the sentence harder to scan during a fast technical review for readers who need a shorter path.',
+      'Please note that the setup guide is ready.',
+    ].join(' ');
+
+    const analysis = analyzeDraft(draft, {
+      ...DEFAULT_ANALYSIS_SETTINGS,
+      enabledRules: {
+        ...DEFAULT_ANALYSIS_SETTINGS.enabledRules,
+        'filler-phrase': false,
+      },
+      thresholds: {
+        ...DEFAULT_ANALYSIS_SETTINGS.thresholds,
+        sentenceWordLimit: 50,
+      },
+    });
+
+    expect(analysis.findings.map((finding) => finding.ruleId)).not.toContain('filler-phrase');
+    expect(analysis.findings.map((finding) => finding.ruleId)).not.toContain('long-sentence');
+  });
+
+  it('normalizes duplicate banned phrases and emits deterministic matches', () => {
+    const analysis = analyzeDraft('Avoid shipping blocker wording in blocker reviews.', {
+      customBannedPhrases: [' blocker ', 'BLOCKER', 'ship'],
+      enabledRules: DEFAULT_ANALYSIS_SETTINGS.enabledRules,
+      thresholds: DEFAULT_ANALYSIS_SETTINGS.thresholds,
+    });
+
+    expect(analysis.findings.map((finding) => finding.ruleId)).toEqual(['custom-banned-phrase', 'custom-banned-phrase']);
+    expect(analysis.findings[0]).toMatchObject({
+      ruleLabel: 'Custom banned phrase',
+      matchedText: 'blocker',
+    });
+    expect(analysis.findings[1]).toMatchObject({
+      matchedText: 'blocker',
     });
   });
 });

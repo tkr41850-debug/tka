@@ -6,6 +6,7 @@ import type {
 } from '../types';
 import { analyzeDraft } from './analyzeDraft';
 import { AnalysisWorkerClientError, createAnalysisWorkerClient } from './createAnalysisWorkerClient';
+import { DEFAULT_ANALYSIS_SETTINGS } from './defaultAnalysisSettings';
 
 type WorkerEvents = {
   error: ErrorEvent;
@@ -83,6 +84,7 @@ function createJobRequest(overrides: Partial<AnalysisJobRequest> = {}): Analysis
     requestId: overrides.requestId ?? 1,
     draft: overrides.draft ?? 'Draft text',
     queuedAt: overrides.queuedAt ?? 10,
+    settings: overrides.settings ?? DEFAULT_ANALYSIS_SETTINGS,
   };
 }
 
@@ -92,7 +94,7 @@ function createJobResult(request: AnalysisJobRequest): AnalysisJobResult {
     requestId: request.requestId,
     queuedAt: request.queuedAt,
     completedAt: request.queuedAt + 20,
-    analysis: analyzeDraft(request.draft),
+    analysis: analyzeDraft(request.draft, request.settings),
   };
 }
 

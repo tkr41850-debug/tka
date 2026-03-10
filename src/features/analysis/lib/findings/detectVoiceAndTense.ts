@@ -1,4 +1,4 @@
-import type { DraftFinding } from '../../types';
+import type { AnalysisSettings, DraftFinding } from '../../types';
 import type { ParsedDraft } from '../parseDraft';
 
 const PASSIVE_VERB_PATTERN = /\b(am|is|are|was|were|be|been|being)\s+([a-z]+(?:ed|en|wn|lt|pt|rt|rn))\b/i;
@@ -9,11 +9,11 @@ function createSentenceLabel(sentenceNumber: number, paragraphNumber: number) {
   return `Sentence ${sentenceNumber} in paragraph ${paragraphNumber}`;
 }
 
-export function detectVoiceAndTense(parsedDraft: ParsedDraft): DraftFinding[] {
+export function detectVoiceAndTense(parsedDraft: ParsedDraft, settings: AnalysisSettings): DraftFinding[] {
   const findings: DraftFinding[] = [];
 
   for (const sentence of parsedDraft.sentences) {
-    const passiveMatch = sentence.text.match(PASSIVE_VERB_PATTERN);
+    const passiveMatch = settings.enabledRules['passive-voice'] ? sentence.text.match(PASSIVE_VERB_PATTERN) : null;
 
     if (passiveMatch) {
       const matchedParticiple = passiveMatch[2]?.toLowerCase() ?? '';
@@ -48,7 +48,7 @@ export function detectVoiceAndTense(parsedDraft: ParsedDraft): DraftFinding[] {
       }
     }
 
-    const tenseMatch = sentence.text.match(TENSE_DRIFT_PATTERN);
+    const tenseMatch = settings.enabledRules['tense-drift'] ? sentence.text.match(TENSE_DRIFT_PATTERN) : null;
 
     if (tenseMatch) {
       const matchedText = tenseMatch[0];

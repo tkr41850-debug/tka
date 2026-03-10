@@ -1,5 +1,5 @@
 import { formatSnapshotSummary } from '../lib/createLocalSnapshot';
-import type { DraftAnalysis } from '../../analysis/types';
+import type { AnalysisSettings, DraftAnalysis } from '../../analysis/types';
 import type { AnalysisState } from '../types';
 
 type WorkspaceSnapshotProps = {
@@ -7,6 +7,7 @@ type WorkspaceSnapshotProps = {
   analysisState: AnalysisState;
   readyMs: number;
   activeFindingId: string | null;
+  settings: AnalysisSettings;
   onSelectFinding: (findingId: string) => void;
 };
 
@@ -14,7 +15,7 @@ function formatFindingConfidence(confidence: DraftAnalysis['findings'][number]['
   return confidence === 'heuristic' ? 'Likely' : 'Direct';
 }
 
-export function WorkspaceSnapshot({ analysis, analysisState, readyMs, activeFindingId, onSelectFinding }: WorkspaceSnapshotProps) {
+export function WorkspaceSnapshot({ analysis, analysisState, readyMs, activeFindingId, settings, onSelectFinding }: WorkspaceSnapshotProps) {
   const { snapshot, findings } = analysis;
   const statusLabel = analysisState === 'fresh' ? 'Current' : analysisState === 'error' ? 'Needs refresh' : analysisState;
   const statusMessage =
@@ -46,9 +47,22 @@ export function WorkspaceSnapshot({ analysis, analysisState, readyMs, activeFind
         <h3>{formatSnapshotSummary(snapshot)}</h3>
         <p className="snapshot-freshness">{freshnessCopy}</p>
         <p>
-          This phase adds a first-pass review list while keeping every check local to the browser and every
-          freshness state explicit.
+          Live review stays local while active rules, length limits, and session-only banned phrases travel with
+          each background refresh.
         </p>
+      </div>
+
+      <div className="status-strip rule-settings-summary" aria-label="active tuning summary">
+        <span className="analysis-status-label">Active tuning</span>
+        <span>
+          Sentence limit {settings.thresholds.sentenceWordLimit} words · Paragraph limit {settings.thresholds.paragraphSentenceLimit}{' '}
+          sentences
+        </span>
+        <span>
+          {settings.customBannedPhrases.length === 0
+            ? 'No custom banned phrases in this session.'
+            : `${settings.customBannedPhrases.length} custom banned phrase${settings.customBannedPhrases.length === 1 ? '' : 's'} active.`}
+        </span>
       </div>
 
       <div className="metric-grid" role="list" aria-label="snapshot metrics">

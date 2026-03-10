@@ -1,4 +1,4 @@
-import type { DraftFinding } from '../../types';
+import type { AnalysisSettings, DraftFinding } from '../../types';
 import type { ParsedDraft } from '../parseDraft';
 
 const COMPLEX_WORDING_RULES = [
@@ -49,7 +49,11 @@ function matchReplacementCase(source: string, replacement: string) {
   return replacement;
 }
 
-export function detectComplexWording(parsedDraft: ParsedDraft): DraftFinding[] {
+export function detectComplexWording(parsedDraft: ParsedDraft, settings: AnalysisSettings): DraftFinding[] {
+  if (!settings.enabledRules['complex-wording']) {
+    return [];
+  }
+
   const findings: DraftFinding[] = [];
 
   for (const rule of COMPLEX_WORDING_RULES) {

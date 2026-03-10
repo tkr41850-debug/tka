@@ -532,6 +532,92 @@ button:focus-visible,
   background: rgba(255, 252, 246, 0.92);
 }
 
+.rule-settings-panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(97, 71, 47, 0.1);
+  border-radius: 1.15rem;
+  background: rgba(255, 252, 246, 0.92);
+}
+
+.rule-settings-copy,
+.rule-toggle-helper,
+.custom-phrase-list span {
+  color: var(--ink-soft);
+}
+
+.rule-settings-header,
+.rule-threshold-grid,
+.custom-phrase-panel,
+.custom-phrase-form,
+.custom-phrase-list {
+  margin-top: 0.85rem;
+}
+
+.rule-settings-list,
+.custom-phrase-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.rule-toggle-card,
+.custom-phrase-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.9rem;
+  align-items: start;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid rgba(97, 71, 47, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 248, 238, 0.88);
+}
+
+.rule-toggle-card strong,
+.rule-toggle-helper {
+  display: block;
+}
+
+.rule-toggle-card input,
+.rule-threshold-field input,
+.custom-phrase-form input {
+  accent-color: var(--accent);
+}
+
+.rule-threshold-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.rule-threshold-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.rule-threshold-field input,
+.custom-phrase-form input {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(107, 78, 51, 0.16);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  font: inherit;
+}
+
+.custom-phrase-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+}
+
+.custom-phrase-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .review-detail-header {
   display: flex;
   justify-content: space-between;
@@ -664,6 +750,11 @@ button:focus-visible,
   }
 
   .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rule-threshold-grid,
+  .custom-phrase-form {
     grid-template-columns: 1fr;
   }
 

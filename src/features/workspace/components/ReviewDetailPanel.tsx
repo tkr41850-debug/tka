@@ -35,6 +35,9 @@ export function ReviewDetailPanel({ finding, canUndo, onApplySuggestion, onUndo 
 
       <p className="review-detail-location">{finding.location.label}</p>
       <p className="review-detail-copy">{finding.explanation}</p>
+      {finding.ruleId === 'custom-banned-phrase' ? (
+        <p className="review-detail-copy">This phrase comes from your current session list, so removing it from rule settings will clear this warning on the next refresh.</p>
+      ) : null}
       <blockquote className="review-detail-quote">{finding.matchedText}</blockquote>
 
       {finding.suggestions.length > 0 ? (

@@ -29,9 +29,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Rules and Presets
 
-- [ ] **RULE-01**: User can enable or disable each available rule individually.
-- [ ] **RULE-02**: User can change numeric thresholds for supported rules such as sentence length and paragraph length.
-- [ ] **RULE-03**: User can define custom banned phrases that are checked against the current text.
+- [x] **RULE-01**: User can enable or disable each available rule individually.
+- [x] **RULE-02**: User can change numeric thresholds for supported rules such as sentence length and paragraph length.
+- [x] **RULE-03**: User can define custom banned phrases that are checked against the current text.
 - [ ] **RULE-04**: User can save and load local rule presets on the same device.
 
 ### Clarity and Readability
@@ -42,7 +42,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **CLAR-04**: User can detect likely tense drift away from the configured tense guidance.
 - [ ] **CLAR-05**: User can detect jargon or overly complex wording and see simpler alternatives when available.
 - [x] **CLAR-06**: User can detect wordy or filler phrasing supported by the local rule pack.
-- [ ] **CLAR-07**: User can detect occurrences of custom banned phrases.
+- [x] **CLAR-07**: User can detect occurrences of custom banned phrases.
 
 ### Local Persistence
 
@@ -105,9 +105,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GUID-01 | Phase 4 | Pending |
 | GUID-02 | Phase 4 | Pending |
 | GUID-03 | Phase 4 | Pending |
-| RULE-01 | Phase 5 | Pending |
-| RULE-02 | Phase 5 | Pending |
-| RULE-03 | Phase 5 | Pending |
+| RULE-01 | Phase 5 | Complete |
+| RULE-02 | Phase 5 | Complete |
+| RULE-03 | Phase 5 | Complete |
 | RULE-04 | Phase 7 | Pending |
 | CLAR-01 | Phase 3 | Complete |
 | CLAR-02 | Phase 3 | Complete |
@@ -115,7 +115,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLAR-04 | Phase 3 | Complete |
 | CLAR-05 | Phase 4 | Pending |
 | CLAR-06 | Phase 3 | Complete |
-| CLAR-07 | Phase 5 | Pending |
+| CLAR-07 | Phase 5 | Complete |
 | SAVE-01 | Phase 7 | Pending |
 | SAVE-02 | Phase 7 | Pending |
 | A11Y-01 | Phase 6 | Pending |
@@ -130,4 +130,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-08*
-*Last updated: 2026-03-10 after Phase 3 execution and verification*
+*Last updated: 2026-03-10 after Phase 5 execution and verification*

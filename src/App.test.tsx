@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import App from './App';
 import { analyzeDraft } from './features/analysis/lib/analyzeDraft';
+import { DEFAULT_ANALYSIS_SETTINGS } from './features/analysis/lib/defaultAnalysisSettings';
 import { sampleDraft } from './features/workspace/data/sampleDraft';
 import { formatSnapshotSummary } from './features/workspace/lib/createLocalSnapshot';
 import type { AnalysisJobRequest, AnalysisJobResult } from './features/analysis/types';
@@ -56,7 +57,7 @@ function createJobResult(request: AnalysisJobRequest): AnalysisJobResult {
     requestId: request.requestId,
     queuedAt: request.queuedAt,
     completedAt: request.queuedAt + 50,
-    analysis: analyzeDraft(request.draft),
+    analysis: analyzeDraft(request.draft, request.settings),
   };
 }
 
@@ -86,6 +87,7 @@ describe('App', () => {
     expect(screen.getByText(/snapshot is current/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /refresh now/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /prioritized review/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /live tuning/i })).toBeInTheDocument();
   });
 
   it('queues background analysis after typing pauses while keeping the editor editable', async () => {
@@ -114,6 +116,7 @@ describe('App', () => {
 
     const queuedRequest = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest | undefined;
     expect(queuedRequest?.draft).toBe(nextDraft);
+    expect(queuedRequest?.settings).toEqual(DEFAULT_ANALYSIS_SETTINGS);
 
     await act(async () => {
       workerClientMocks.pending.get(queuedRequest?.requestId ?? 0)?.resolve(createJobResult(queuedRequest as AnalysisJobRequest));
@@ -166,7 +169,7 @@ describe('App', () => {
       await flushPromises();
     });
 
-    expect(screen.queryByText(/wordy phrase/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('list', { name: /prioritized findings/i })).not.toBeInTheDocument();
     expect(screen.getByText(/last accepted result while a newer refresh is pending/i)).toBeInTheDocument();
 
     await act(async () => {
@@ -300,5 +303,104 @@ describe('App', () => {
 
     expect(screen.getByRole('heading', { name: /complex wording/i })).toBeInTheDocument();
     expect(screen.getByDisplayValue('We utilize a robust workflow.')).toBeInTheDocument();
+  });
+
+  it('refreshes findings when rules are toggled or thresholds change', async () => {
+    const draft = 'Please note that this sentence intentionally keeps going so it crosses the default limit with many extra words that make the sentence harder to scan during a technical review.';
+
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText(/single document workspace/i), { target: { value: draft } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    const initialRequest = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(initialRequest.requestId)?.resolve(createJobResult(initialRequest));
+      await flushPromises();
+    });
+
+    const findingsList = screen.getByRole('list', { name: /prioritized findings/i });
+    expect(within(findingsList).getByText(/wordy phrase/i)).toBeInTheDocument();
+    expect(within(findingsList).getByText(/long sentence/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('checkbox', { name: /wordy phrase/i }));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    const toggleRequest = workerClientMocks.analyze.mock.calls[1]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(toggleRequest.requestId)?.resolve(createJobResult(toggleRequest));
+      await flushPromises();
+    });
+
+    expect(within(screen.getByRole('list', { name: /prioritized findings/i })).queryByText(/wordy phrase/i)).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByRole('spinbutton', { name: /sentence word limit/i }), { target: { value: '60' } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    const thresholdRequest = workerClientMocks.analyze.mock.calls[2]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(thresholdRequest.requestId)?.resolve(createJobResult(thresholdRequest));
+      await flushPromises();
+    });
+
+    expect(screen.queryByRole('list', { name: /prioritized findings/i })).not.toBeInTheDocument();
+    expect(screen.getByText(/no core findings detected/i)).toBeInTheDocument();
+  });
+
+  it('adds and removes custom banned phrases through the live settings panel', async () => {
+    const draft = 'Avoid blocker wording in this blocker-ready draft.';
+
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText(/single document workspace/i), { target: { value: draft } });
+    fireEvent.change(screen.getByPlaceholderText(/add a project-specific banned phrase/i), { target: { value: ' blocker ' } });
+    fireEvent.click(screen.getByRole('button', { name: /add phrase/i }));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    const addRequest = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+    expect(addRequest.settings.customBannedPhrases).toEqual(['blocker']);
+
+    await act(async () => {
+      workerClientMocks.pending.get(addRequest.requestId)?.resolve(createJobResult(addRequest));
+      await flushPromises();
+    });
+
+    const list = screen.getByRole('list', { name: /prioritized findings/i });
+    const customPhraseButton = within(list)
+      .getAllByRole('button')
+      .find((button) => button.textContent?.match(/custom banned phrase/i));
+
+    fireEvent.click(customPhraseButton as HTMLElement);
+
+    expect(screen.getByText(/comes from your current session list/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /remove/i }));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    const removeRequest = workerClientMocks.analyze.mock.calls[1]?.[0] as AnalysisJobRequest;
+    expect(removeRequest.settings.customBannedPhrases).toEqual([]);
+
+    await act(async () => {
+      workerClientMocks.pending.get(removeRequest.requestId)?.resolve(createJobResult(removeRequest));
+      await flushPromises();
+    });
+
+    expect(screen.queryByRole('list', { name: /prioritized findings/i })).not.toBeInTheDocument();
+    expect(screen.getByText(/no core findings detected/i)).toBeInTheDocument();
   });
 });

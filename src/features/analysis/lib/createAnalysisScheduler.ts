@@ -1,4 +1,4 @@
-import type { AnalysisJobRequest, AnalysisJobResult, AnalysisLifecycle, AnalysisWorkerError } from '../types';
+import type { AnalysisJobRequest, AnalysisJobResult, AnalysisLifecycle, AnalysisSettings, AnalysisWorkerError } from '../types';
 import { AnalysisWorkerClientError } from './createAnalysisWorkerClient';
 import type { AnalysisWorkerClient } from './createAnalysisWorkerClient';
 
@@ -15,8 +15,8 @@ export type CreateAnalysisSchedulerOptions = {
 };
 
 export type AnalysisScheduler = {
-  queue: (draft: string) => number;
-  flush: (draft: string) => Promise<void>;
+  queue: (draft: string, settings: AnalysisSettings) => number;
+  flush: (draft: string, settings: AnalysisSettings) => Promise<void>;
   dispose: () => void;
 };
 
@@ -48,13 +48,14 @@ export function createAnalysisScheduler({
   let latestRequestId = 0;
   let timerId: ReturnType<typeof setTimeout> | undefined;
 
-  const createRequest = (draft: string): AnalysisJobRequest => {
+  const createRequest = (draft: string, settings: AnalysisSettings): AnalysisJobRequest => {
     latestRequestId += 1;
 
     return {
       requestId: latestRequestId,
       draft,
       queuedAt: now(),
+      settings,
     };
   };
 
@@ -111,14 +112,14 @@ export function createAnalysisScheduler({
   };
 
   return {
-    queue(draft) {
+    queue(draft, settings) {
       if (disposed) {
         return 0;
       }
 
       clearPendingTimer();
 
-      const request = createRequest(draft);
+      const request = createRequest(draft, settings);
 
       onStateChange?.({
         state: 'queued',
@@ -134,14 +135,14 @@ export function createAnalysisScheduler({
       return request.requestId;
     },
 
-    async flush(draft) {
+    async flush(draft, settings) {
       if (disposed) {
         return;
       }
 
       clearPendingTimer();
 
-      const request = createRequest(draft);
+      const request = createRequest(draft, settings);
       await runRequest(request);
     },
 

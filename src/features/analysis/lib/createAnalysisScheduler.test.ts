@@ -1,6 +1,7 @@
 import type { AnalysisJobRequest, AnalysisJobResult, AnalysisLifecycle } from '../types';
 import { analyzeDraft } from './analyzeDraft';
 import { createAnalysisScheduler } from './createAnalysisScheduler';
+import { DEFAULT_ANALYSIS_SETTINGS } from './defaultAnalysisSettings';
 
 type DeferredResult = {
   request: AnalysisJobRequest;
@@ -40,7 +41,7 @@ function createJobResult(request: AnalysisJobRequest): AnalysisJobResult {
     requestId: request.requestId,
     queuedAt: request.queuedAt,
     completedAt: request.queuedAt + 50,
-    analysis: analyzeDraft(request.draft),
+    analysis: analyzeDraft(request.draft, request.settings),
   };
 }
 
@@ -67,8 +68,8 @@ describe('createAnalysisScheduler', () => {
       onStateChange,
     });
 
-    scheduler.queue('first draft');
-    scheduler.queue('second draft');
+    scheduler.queue('first draft', DEFAULT_ANALYSIS_SETTINGS);
+    scheduler.queue('second draft', DEFAULT_ANALYSIS_SETTINGS);
 
     expect(client.analyze).not.toHaveBeenCalled();
 
@@ -93,8 +94,8 @@ describe('createAnalysisScheduler', () => {
       delayMs: 300,
     });
 
-    scheduler.queue('draft before flush');
-    scheduler.flush('draft after flush');
+    scheduler.queue('draft before flush', DEFAULT_ANALYSIS_SETTINGS);
+    scheduler.flush('draft after flush', DEFAULT_ANALYSIS_SETTINGS);
 
     expect(client.analyze).toHaveBeenCalledTimes(1);
     expect(client.analyze).toHaveBeenCalledWith(
@@ -120,12 +121,12 @@ describe('createAnalysisScheduler', () => {
       onStateChange,
     });
 
-    scheduler.queue('first draft');
+    scheduler.queue('first draft', DEFAULT_ANALYSIS_SETTINGS);
     await vi.advanceTimersByTimeAsync(300);
 
     const firstRequest = client.analyze.mock.calls[0][0] as AnalysisJobRequest;
 
-    scheduler.queue('second draft');
+    scheduler.queue('second draft', DEFAULT_ANALYSIS_SETTINGS);
     client.pending.get(firstRequest.requestId)?.resolve(createJobResult(firstRequest));
     await flushPromises();
 
@@ -152,7 +153,7 @@ describe('createAnalysisScheduler', () => {
       delayMs: 300,
     });
 
-    scheduler.queue('draft to discard');
+    scheduler.queue('draft to discard', DEFAULT_ANALYSIS_SETTINGS);
     scheduler.dispose();
 
     await vi.advanceTimersByTimeAsync(300);

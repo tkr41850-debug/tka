@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Responsive Analysis Loop** - Background browser-local analysis refreshes without blocking writing. (completed 2026-03-10)
 - [x] **Phase 3: Core Findings** - Initial rule pack returns prioritized technical-writing issues. (completed 2026-03-10)
 - [ ] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits.
-- [ ] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases.
+- [x] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases. (completed 2026-03-10)
 - [ ] **Phase 6: Trustworthy First-Run Access** - Tutorial, accessibility, and per-warning dismissals make the app usable and trustworthy.
 - [ ] **Phase 7: Local Continuity and Presets** - Same-browser return flows restore preferences, dismissals, presets, and optional draft recovery.
 
@@ -88,7 +88,13 @@ Plans:
   1. User can enable or disable each available rule individually and see refreshed analysis respect those choices.
   2. User can change supported numeric thresholds, such as sentence and paragraph length, and see findings update to match.
   3. User can add custom banned phrases and see those phrases detected in the current text.
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] `05-01-PLAN.md` - Add normalized analysis settings, configurable detectors, and custom banned phrase analysis coverage.
+- [ ] `05-02-PLAN.md` - Thread rule settings through the worker-backed analysis loop and app shell refresh flow.
+- [ ] `05-03-PLAN.md` - Build the shipped settings panel for per-rule toggles and numeric threshold tuning.
+- [ ] `05-04-PLAN.md` - Finish custom banned phrase editing and verify full rule-tuning behavior end to end.
 
 ### Phase 6: Trustworthy First-Run Access
 **Goal**: Users can trust and operate the review experience accessibly from their first visit.
@@ -121,6 +127,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Responsive Analysis Loop | 2/2 | Complete | 2026-03-10 |
 | 3. Core Findings | 3/3 | Complete | 2026-03-10 |
 | 4. Contextual Review and Guidance | 0/3 | Planned | - |
-| 5. Rule Tuning and Custom Detection | 0/TBD | Not started | - |
+| 5. Rule Tuning and Custom Detection | 4/4 | Complete | 2026-03-10 |
 | 6. Trustworthy First-Run Access | 0/TBD | Not started | - |
 | 7. Local Continuity and Presets | 0/TBD | Not started | - |

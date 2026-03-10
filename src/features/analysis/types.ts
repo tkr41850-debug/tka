@@ -6,6 +6,24 @@ export type FindingSeverity = 'high' | 'medium' | 'low';
 
 export type FindingConfidence = 'deterministic' | 'heuristic';
 
+export type AnalysisRuleId =
+  | 'long-sentence'
+  | 'long-paragraph'
+  | 'filler-phrase'
+  | 'complex-wording'
+  | 'passive-voice'
+  | 'tense-drift'
+  | 'custom-banned-phrase';
+
+export type AnalysisSettings = {
+  enabledRules: Record<AnalysisRuleId, boolean>;
+  thresholds: {
+    sentenceWordLimit: number;
+    paragraphSentenceLimit: number;
+  };
+  customBannedPhrases: string[];
+};
+
 export type DraftFindingLocation = {
   start: number;
   end: number;
@@ -27,7 +45,7 @@ export type FindingSuggestion = {
 
 export type DraftFinding = {
   id: string;
-  ruleId: string;
+  ruleId: AnalysisRuleId;
   ruleLabel: string;
   severity: FindingSeverity;
   confidence: FindingConfidence;
@@ -47,6 +65,7 @@ export type AnalysisJobRequest = {
   requestId: number;
   draft: string;
   queuedAt: number;
+  settings: AnalysisSettings;
 };
 
 export type AnalysisWorkerError = {

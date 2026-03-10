@@ -1,6 +1,8 @@
 import { createLocalSnapshot } from '../../workspace/lib/createLocalSnapshot';
-import type { DraftAnalysis, DraftFinding, FindingSeverity } from '../types';
+import type { AnalysisSettings, DraftAnalysis, DraftFinding, FindingSeverity } from '../types';
+import { normalizeAnalysisSettings } from './normalizeAnalysisSettings';
 import { detectComplexWording } from './findings/detectComplexWording';
+import { detectCustomBannedPhrases } from './findings/detectCustomBannedPhrases';
 import { detectLengthAndWordiness } from './findings/detectLengthAndWordiness';
 import { detectVoiceAndTense } from './findings/detectVoiceAndTense';
 import { parseDraft } from './parseDraft';
@@ -27,12 +29,14 @@ function attachFindingId(finding: Omit<DraftFinding, 'id'> | DraftFinding): Draf
   };
 }
 
-export function analyzeDraft(text: string): DraftAnalysis {
+export function analyzeDraft(text: string, settings?: Partial<AnalysisSettings>): DraftAnalysis {
   const parsedDraft = parseDraft(text);
+  const normalizedSettings = normalizeAnalysisSettings(settings);
   const findings = [
-    ...detectLengthAndWordiness(parsedDraft),
-    ...detectComplexWording(parsedDraft),
-    ...detectVoiceAndTense(parsedDraft),
+    ...detectLengthAndWordiness(parsedDraft, normalizedSettings),
+    ...detectCustomBannedPhrases(parsedDraft, normalizedSettings),
+    ...detectComplexWording(parsedDraft, normalizedSettings),
+    ...detectVoiceAndTense(parsedDraft, normalizedSettings),
   ]
     .sort(compareFindings)
     .map(attachFindingId);

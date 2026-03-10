@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { detectVoiceAndTense } from './detectVoiceAndTense';
 import { parseDraft } from '../parseDraft';
+import { DEFAULT_ANALYSIS_SETTINGS } from '../defaultAnalysisSettings';
 
 describe('detectVoiceAndTense', () => {
   it('flags likely passive voice conservatively', () => {
-    const findings = detectVoiceAndTense(parseDraft('The release was completed by the documentation team.'));
+    const findings = detectVoiceAndTense(parseDraft('The release was completed by the documentation team.'), DEFAULT_ANALYSIS_SETTINGS);
 
     expect(findings).toHaveLength(2);
     expect(findings[0]).toMatchObject({
@@ -14,13 +15,16 @@ describe('detectVoiceAndTense', () => {
   });
 
   it('avoids a common adjectival false positive', () => {
-    const findings = detectVoiceAndTense(parseDraft('The release is ready for review.'));
+    const findings = detectVoiceAndTense(parseDraft('The release is ready for review.'), DEFAULT_ANALYSIS_SETTINGS);
 
     expect(findings).toEqual([]);
   });
 
   it('flags tense drift for clear future or past markers', () => {
-    const findings = detectVoiceAndTense(parseDraft('The guide explains the workflow. The team will update the screenshots tomorrow.'));
+    const findings = detectVoiceAndTense(
+      parseDraft('The guide explains the workflow. The team will update the screenshots tomorrow.'),
+      DEFAULT_ANALYSIS_SETTINGS,
+    );
 
     expect(findings).toHaveLength(1);
     expect(findings[0]).toMatchObject({

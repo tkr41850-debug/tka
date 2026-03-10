@@ -27,7 +27,7 @@ self.onmessage = (event: MessageEvent<AnalysisJobRequest>) => {
       requestId: request.requestId,
       queuedAt: request.queuedAt,
       completedAt: Date.now(),
-      analysis: analyzeDraft(request.draft),
+      analysis: analyzeDraft(request.draft, request.settings),
     };
 
     self.postMessage(response);
