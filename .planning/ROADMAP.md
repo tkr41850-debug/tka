@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Local Workspace Foundation** - Fast static shell for one local text source and no-cloud analysis entry. (completed 2026-03-09)
 - [x] **Phase 2: Responsive Analysis Loop** - Background browser-local analysis refreshes without blocking writing. (completed 2026-03-10)
 - [x] **Phase 3: Core Findings** - Initial rule pack returns prioritized technical-writing issues. (completed 2026-03-10)
-- [ ] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits.
+- [x] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits. (completed 2026-03-10)
 - [x] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases. (completed 2026-03-10)
 - [x] **Phase 6: Trustworthy First-Run Access** - Tutorial, accessibility, and per-warning dismissals make the app usable and trustworthy. (completed 2026-03-10)
 - [x] **Phase 7: Local Continuity and Presets** - Same-browser return flows restore preferences, dismissals, presets, and optional draft recovery. (completed 2026-03-10)
@@ -59,9 +59,9 @@ Plans:
   4. User sees wordy or filler phrasing flagged as clarity issues in the prioritized review list.
 **Plans**: 3 plans
 Plans:
-- [ ] `03-01-PLAN.md` - Build the shared draft-analysis core with deterministic findings for long sentences, long paragraphs, and filler phrases.
-- [ ] `03-02-PLAN.md` - Add conservative passive-voice and tense-drift heuristics plus aggregate ranking coverage.
-- [ ] `03-03-PLAN.md` - Wire prioritized findings into the worker-backed UI and verify the review list end to end.
+- [x] `03-01-PLAN.md` - Build the shared draft-analysis core with deterministic findings for long sentences, long paragraphs, and filler phrases.
+- [x] `03-02-PLAN.md` - Add conservative passive-voice and tense-drift heuristics plus aggregate ranking coverage.
+- [x] `03-03-PLAN.md` - Wire prioritized findings into the worker-backed UI and verify the review list end to end.
 
 ### Phase 4: Contextual Review and Guidance
 **Goal**: Users can inspect each finding in context and act on supported guidance safely.
@@ -76,9 +76,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] `04-01-PLAN.md` - Extend findings with explanation and suggestion metadata, add complex-wording detection, and build the safe rewrite helper.
-- [ ] `04-02-PLAN.md` - Add inline highlights, active issue navigation, and a focused explanation panel around the existing textarea.
-- [ ] `04-03-PLAN.md` - Wire supported suggestion apply-and-undo actions and verify contextual review end to end.
+- [x] `04-01-PLAN.md` - Extend findings with explanation and suggestion metadata, add complex-wording detection, and build the safe rewrite helper.
+- [x] `04-02-PLAN.md` - Add inline highlights, active issue navigation, and a focused explanation panel around the existing textarea.
+- [x] `04-03-PLAN.md` - Wire supported suggestion apply-and-undo actions and verify contextual review end to end.
 
 ### Phase 5: Rule Tuning and Custom Detection
 **Goal**: Users can tune what the analyzer checks and what counts as a violation for their writing style.
@@ -91,10 +91,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] `05-01-PLAN.md` - Add normalized analysis settings, configurable detectors, and custom banned phrase analysis coverage.
-- [ ] `05-02-PLAN.md` - Thread rule settings through the worker-backed analysis loop and app shell refresh flow.
-- [ ] `05-03-PLAN.md` - Build the shipped settings panel for per-rule toggles and numeric threshold tuning.
-- [ ] `05-04-PLAN.md` - Finish custom banned phrase editing and verify full rule-tuning behavior end to end.
+- [x] `05-01-PLAN.md` - Add normalized analysis settings, configurable detectors, and custom banned phrase analysis coverage.
+- [x] `05-02-PLAN.md` - Thread rule settings through the worker-backed analysis loop and app shell refresh flow.
+- [x] `05-03-PLAN.md` - Build the shipped settings panel for per-rule toggles and numeric threshold tuning.
+- [x] `05-04-PLAN.md` - Finish custom banned phrase editing and verify full rule-tuning behavior end to end.
 
 ### Phase 6: Trustworthy First-Run Access
 **Goal**: Users can trust and operate the review experience accessibly from their first visit.
@@ -138,7 +138,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Local Workspace Foundation | 2/2 | Complete | 2026-03-09 |
 | 2. Responsive Analysis Loop | 2/2 | Complete | 2026-03-10 |
 | 3. Core Findings | 3/3 | Complete | 2026-03-10 |
-| 4. Contextual Review and Guidance | 0/3 | Planned | - |
+| 4. Contextual Review and Guidance | 3/3 | Complete | 2026-03-10 |
 | 5. Rule Tuning and Custom Detection | 4/4 | Complete | 2026-03-10 |
 | 6. Trustworthy First-Run Access | 4/4 | Complete | 2026-03-10 |
 | 7. Local Continuity and Presets | 4/4 | Complete | 2026-03-10 |
