@@ -90,6 +90,7 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: /refresh now/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /prioritized review/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /live tuning/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/build version v0\.1\.0 local/i)).toBeInTheDocument();
   });
 
   it('queues background analysis after typing pauses while keeping the editor editable', async () => {

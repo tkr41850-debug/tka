@@ -59,6 +59,13 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **PERF-01**: User sees the app ready to analyze within 3 seconds on supported devices.
 - [x] **PERF-02**: User sees analysis refresh shortly after pausing typing on typical documents.
 
+### Release and Deployment
+
+- [ ] **CI-01**: Every pull request and push runs named GitHub Actions checks for `lint`, `test`, and `build`.
+- [ ] **CI-02**: The repository can require those checks to keep `main` green before release.
+- [ ] **DEPLOY-01**: Successful `main` builds publish one production GitHub Pages site from the built artifact.
+- [ ] **DEPLOY-02**: The live site shows subtle build-version information and the repository documents a manual redeploy path.
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -122,12 +129,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | A11Y-02 | Phase 6 | Complete |
 | PERF-01 | Phase 1 | Complete |
 | PERF-02 | Phase 2 | Complete |
+| CI-01 | Phase 8 | Pending |
+| CI-02 | Phase 8 | Pending |
+| DEPLOY-01 | Phase 8 | Pending |
+| DEPLOY-02 | Phase 8 | Pending |
 
 **Coverage:**
-- v1 requirements: 28 total
-- Mapped to phases: 28
+- v1 requirements: 32 total
+- Mapped to phases: 32
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-08*
-*Last updated: 2026-03-10 after Phase 6 execution and verification*
+*Last updated: 2026-03-10 after Phase 8 planning*

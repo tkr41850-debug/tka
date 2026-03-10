@@ -18,6 +18,7 @@ import { DEFAULT_ANALYSIS_SETTINGS } from './features/analysis/lib/defaultAnalys
 import { normalizeAnalysisSettings } from './features/analysis/lib/normalizeAnalysisSettings';
 import type { AnalysisState } from './features/workspace/types';
 import { getReadyLatencyMs } from './lib/bootMetrics';
+import { buildVersion } from './lib/buildVersion';
 import { createAnalysisWorkerClient } from './features/analysis/lib/createAnalysisWorkerClient';
 import { createAnalysisScheduler } from './features/analysis/lib/createAnalysisScheduler';
 import {
@@ -73,8 +74,7 @@ function normalizePresetName(name: string) {
 }
 
 export default function App() {
-  const initialPersistenceRef = useRef(loadWorkspacePersistence());
-  const initialPersistence = initialPersistenceRef.current;
+  const [initialPersistence] = useState(() => loadWorkspacePersistence());
   const initialPendingRecoveredDraft =
     initialPersistence.draftRecoveryEnabled &&
     initialPersistence.savedDraft &&
@@ -513,19 +513,22 @@ export default function App() {
         onFinish={closeTutorial}
       />
 
-      <header className="hero-panel panel">
-        <p className="eyebrow">Phase 7 / Local Continuity and Presets</p>
+        <header className="hero-panel panel">
+          <p className="eyebrow">Phase 8 / CI and GitHub Pages Deployment</p>
         <div className="hero-copy">
           <div>
             <h1>Technical Writing Assistant</h1>
-            <p className="hero-text">
-              Return on the same browser to pick up your local settings, dismissed warnings, saved presets, and optional draft recovery while every analysis pass stays on-device.
-            </p>
+              <p className="hero-text">
+                Keep every review pass on-device while the repository now ships with named GitHub Actions quality gates, a Pages-ready build, and subtle release metadata for the live site.
+              </p>
           </div>
 
           <div className="hero-badges" aria-label="foundation status">
             <span className="badge">Single source workspace</span>
-            <span className="badge">Same-browser continuity</span>
+            <span className="badge">GitHub Pages ready</span>
+            <span className="badge badge-muted" aria-label={`build version ${buildVersion.label}`} title={buildVersion.detail}>
+              {buildVersion.label}
+            </span>
             <button ref={tutorialButtonRef} type="button" className="badge badge-button" onClick={() => openTutorial(tutorialButtonRef.current)}>
               Reopen tutorial
             </button>

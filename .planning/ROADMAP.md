@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roadmap turns the narrowed boundary into seven dependency-aware phases: establish a fast static single-text workspace, make browser-local analysis responsive, surface trustworthy findings, then add contextual guidance, rule tuning, accessible trust features, and durable local continuity. Optional WASM stays out of v1 and is only reconsidered after profiling shows the worker-based JavaScript path is no longer enough.
+This roadmap turns the narrowed boundary into eight dependency-aware phases: establish a fast static single-text workspace, make browser-local analysis responsive, surface trustworthy findings, then add contextual guidance, rule tuning, accessible trust features, durable local continuity, and a release-ready CI plus GitHub Pages deployment path. Optional WASM stays out of v1 and is only reconsidered after profiling shows the worker-based JavaScript path is no longer enough.
 
 ## Phases
 
@@ -19,6 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases. (completed 2026-03-10)
 - [x] **Phase 6: Trustworthy First-Run Access** - Tutorial, accessibility, and per-warning dismissals make the app usable and trustworthy. (completed 2026-03-10)
 - [x] **Phase 7: Local Continuity and Presets** - Same-browser return flows restore preferences, dismissals, presets, and optional draft recovery. (completed 2026-03-10)
+- [ ] **Phase 8: CI and GitHub Pages Deployment** - GitHub Actions keeps `main` green and publishes one production Pages site from successful builds. (plans executed 2026-03-10; awaiting GitHub-side verification)
 
 ## Phase Details
 
@@ -128,10 +129,26 @@ Plans:
 - [x] `07-03-PLAN.md` - Build local preset save, apply, rename, and delete flows inside the existing rule-settings surface.
 - [x] `07-04-PLAN.md` - Add explicit draft-recovery controls and restore prompts, then verify the full continuity flow end to end.
 
+### Phase 8: CI and GitHub Pages Deployment
+**Goal**: The repository verifies every change in GitHub Actions and publishes one production GitHub Pages site from successful `main` builds.
+**Depends on**: Phase 7
+**Requirements**: CI-01, CI-02, DEPLOY-01, DEPLOY-02
+**Success Criteria** (what must be TRUE):
+  1. Pull requests and pushes run clearly named `lint`, `test`, and `build` GitHub Actions checks against the current app.
+  2. A successful `main` build produces the GitHub Pages artifact and deploys the production site without rebuilding from a different source.
+  3. Failed deployments leave the last good Pages site live while showing an obvious failed deployment status in GitHub Actions.
+  4. The live site shows subtle build-version information and the repository includes a documented manual redeploy path.
+**Plans**: 3 plans
+
+Plans:
+- [x] `08-01-PLAN.md` - Add the repo lint foundation, CI scripts, and named GitHub Actions quality gates for pushes and pull requests.
+- [x] `08-02-PLAN.md` - Make the Vite build Pages-aware, surface build version metadata in the app, and deploy the uploaded artifact from successful `main` runs.
+- [x] `08-03-PLAN.md` - Close the release path with deployment docs, required-settings guidance, and full verification for CI plus Pages behavior.
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -142,12 +159,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 5. Rule Tuning and Custom Detection | 4/4 | Complete | 2026-03-10 |
 | 6. Trustworthy First-Run Access | 4/4 | Complete | 2026-03-10 |
 | 7. Local Continuity and Presets | 4/4 | Complete | 2026-03-10 |
-
-### Phase 8: CI and GitHub Pages Deployment
-
-**Goal:** [To be planned]
-**Depends on:** Phase 7
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd-plan-phase 8 to break down)
+| 8. CI and GitHub Pages Deployment | 3/3 | Awaiting verification | - |

@@ -158,6 +158,13 @@ body::before {
   box-shadow: none;
 }
 
+.badge-muted {
+  border-color: rgba(95, 72, 50, 0.16);
+  background: rgba(255, 248, 238, 0.72);
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+}
+
 .workspace-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.85fr);

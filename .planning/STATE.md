@@ -5,14 +5,14 @@
 See: `.planning/PROJECT.md` (updated 2026-03-08)
 
 **Core value:** Users can paste or type text into a single web page and immediately get useful, local-only feedback that helps them write more clearly.
-**Current focus:** Phase 7 complete - local continuity, presets, and draft recovery shipped
+**Current focus:** Phase 8 executed - awaiting GitHub-side verification for Pages and branch-protection settings
 
 ## Current Position
 
-Phase: 7 of 7 (Local Continuity and Presets)
-Plan: 4 of 4 planned in current phase
-Status: Phase 7 complete - ready for final verification/closeout
-Last activity: 2026-03-10 - Executed Phase 7 local continuity and presets work
+Phase: 8 of 8 (CI and GitHub Pages Deployment)
+Plan: 3 of 3 executed in current phase
+Status: Phase 8 implemented locally - waiting on GitHub-side verification
+Last activity: 2026-03-10 - Executed Phase 8 CI and GitHub Pages deployment plans
 
 Progress: [##########] 100%
 
@@ -64,6 +64,9 @@ Recent decisions affecting current work:
 - [Phase 7] Persist only browser-local source state and rerun analysis instead of saving derived worker output.
 - [Phase 7] Keep draft recovery opt-in and require an explicit restore-or-discard decision before replacing the current workspace.
 - [Phase 7] Reuse normalized analysis settings for saved presets so preset apply stays aligned with live analysis behavior.
+- [Phase 8] Keep stable `lint`, `test`, `build`, and `deploy` job names so GitHub status checks stay require-able and readable.
+- [Phase 8] Deploy GitHub Pages only from the uploaded `dist` artifact produced by the successful `build` job on `main`.
+- [Phase 8] Resolve the Vite Pages base from GitHub repository context while keeping local development rooted at `/`.
 
 ### Roadmap Evolution
 
@@ -71,7 +74,8 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Prepare Phase 7 verification/closeout artifacts now that local continuity and presets are complete.
+- Run one GitHub-hosted `CI and Pages` workflow on `main` and confirm the live Pages URL plus build-version label.
+- Enable GitHub Pages via Actions and require `lint`, `test`, and `build` on `main`.
 
 ### Blockers/Concerns
 
@@ -80,6 +84,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-10 08:06
-Stopped at: Completed `07-local-continuity-and-presets`
+Last session: 2026-03-10 11:42
+Stopped at: Waiting for GitHub-side verification of `08-ci-and-github-pages-deployment`
 Resume file: `.planning/ROADMAP.md`

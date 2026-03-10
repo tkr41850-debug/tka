@@ -1,5 +1,4 @@
 import type {
-  AnalysisJobError,
   AnalysisJobRequest,
   AnalysisJobResponse,
   AnalysisJobResult,
