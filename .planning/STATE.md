@@ -5,16 +5,16 @@
 See: `.planning/PROJECT.md` (updated 2026-03-08)
 
 **Core value:** Users can paste or type text into a single web page and immediately get useful, local-only feedback that helps them write more clearly.
-**Current focus:** Phase 6 - Trustworthy First-Run Access
+**Current focus:** Phase 7 - Local Continuity and Presets
 
 ## Current Position
 
-Phase: 6 of 7 (Trustworthy First-Run Access)
+Phase: 7 of 7 (Local Continuity and Presets)
 Plan: 0 of TBD in current phase
-Status: Phase 5 executed - ready for Phase 6 planning
-Last activity: 2026-03-10 - Executed Phase 5 rule tuning and custom detection work
+Status: Phase 6 complete - Phase 7 ready for planning
+Last activity: 2026-03-10 - Completed Phase 6 trustworthy first-run access work
 
-Progress: [#######---] 71%
+Progress: [#########-] 86%
 
 ## Performance Metrics
 
@@ -31,6 +31,7 @@ Progress: [#######---] 71%
 | 2 | 2 | 19 min | 9.5 min |
 | 3 | 3 | 33 min | 11 min |
 | 5 | 4 | current session | current session |
+| 6 | 4 | current session | current session |
 
 **Recent Trend:**
 - Last 5 plans: 02-01, 02-02, 03-01, 03-02, 03-03
@@ -58,20 +59,21 @@ Recent decisions affecting current work:
 - [Phase 03-core-findings]: Keep one serializable `DraftAnalysis` shape that carries snapshot metrics plus ranked findings through the existing worker protocol.
 - [Phase 03-core-findings]: Parse each draft once, rank findings in the analysis layer, and treat the React panel as a pure renderer of worker output.
 - [Phase 03-core-findings]: Label passive voice and tense drift as likely heuristic warnings so the first rule pack stays conservative and trustworthy.
+- [Phase 6] Keep tutorial completion, dismissals, and trust announcements session-only until persistence work begins in Phase 7.
+- [Phase 6] Filter dismissed warnings in the app shell instead of mutating analyzer output so worker results stay deterministic.
 
 ### Pending Todos
 
-- Plan Phase 6 trustworthy first-run access on top of the live contextual review and rule tuning workflow.
+- Plan Phase 7 local continuity and presets work on top of the completed trust-state, tutorial, and dismissal workflow.
 
 ### Blockers/Concerns
 
 - [Phase 2] Validate whether the 300 ms starting debounce still feels fast on long drafts once worker wiring is live.
-- [Phase 6] Tutorial, accessibility, and per-warning dismissal behavior still need a low-friction trust model.
 - [Phase 7] Recovery policy should stay explicit so local draft restore does not surprise privacy-sensitive users.
 - [Future] Optional WASM remains out of v1 unless performance measurements justify it.
 
 ## Session Continuity
 
-Last session: 2026-03-10 07:15
-Stopped at: Completed `05-rule-tuning-and-custom-detection`
+Last session: 2026-03-10 08:06
+Stopped at: Completed `06-trustworthy-first-run-access`
 Resume file: `.planning/ROADMAP.md`

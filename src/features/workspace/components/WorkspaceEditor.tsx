@@ -99,6 +99,7 @@ export function WorkspaceEditor({
       <div className={`workspace-meta analysis-status analysis-status-${analysisState}`} aria-live="polite">
         <span>{editorStatusCopy}</span>
         <span>{draftCharacters} characters in the active document.</span>
+        <span>Keyboard tip: use Tab to move between the review list, rule settings, and rewrite actions.</span>
       </div>
 
       <label className="workspace-label" htmlFor="workspace-input">
@@ -137,7 +138,7 @@ export function WorkspaceEditor({
         />
       </div>
 
-      {activeFinding ? <p className="workspace-active-finding">Active review span: {activeFinding.location.label}.</p> : null}
+      {activeFinding ? <p className="workspace-active-finding">Active review span: {activeFinding.location.label}. Severity: {activeFinding.severity}. {activeFinding.confidence === 'heuristic' ? 'Likely' : 'Direct'} confidence.</p> : null}
 
       <p className="workspace-hint">
         Paste, type, or replace one draft. Nothing leaves this browser tab, and no account is required.

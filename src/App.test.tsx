@@ -403,4 +403,93 @@ describe('App', () => {
     expect(screen.queryByRole('list', { name: /prioritized findings/i })).not.toBeInTheDocument();
     expect(screen.getByText(/no core findings detected/i)).toBeInTheDocument();
   });
+
+  it('opens a first-run tutorial, lets users skip or finish it, and supports reopening', () => {
+    render(<App />);
+
+    expect(screen.getByRole('dialog', { name: /start with highlighted review spans/i })).toBeInTheDocument();
+    expect(document.activeElement).toHaveTextContent(/skip tutorial/i);
+
+    fireEvent.click(screen.getByRole('button', { name: /skip tutorial/i }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(document.activeElement).toHaveTextContent(/reopen tutorial/i);
+
+    fireEvent.click(screen.getByRole('button', { name: /reopen tutorial/i }));
+    expect(screen.getByRole('dialog', { name: /start with highlighted review spans/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /next tip/i }));
+    expect(screen.getByRole('dialog', { name: /use the prioritized review list/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /next tip/i }));
+    expect(screen.getByRole('dialog', { name: /tune the live rule settings/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /finish tutorial/i }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('dismisses one warning without disabling its rule and restores dismissed warnings later', async () => {
+    const draft = 'We utilize a robust workflow. We leverage a strong checklist.';
+
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /skip tutorial/i }));
+
+    fireEvent.change(screen.getByLabelText(/single document workspace/i), { target: { value: draft } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    const request = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(request.requestId)?.resolve(createJobResult(request));
+      await flushPromises();
+    });
+
+    const list = screen.getByRole('list', { name: /prioritized findings/i });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getByRole('checkbox', { name: /complex wording rule/i })).toBeChecked();
+
+    fireEvent.click(within(list).getAllByRole('button', { name: /dismiss warning for complex wording/i })[0]);
+
+    expect(within(screen.getByRole('list', { name: /prioritized findings/i })).getAllByRole('listitem')).toHaveLength(2);
+    expect(screen.getByText(/1 warning hidden for this session only/i)).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /complex wording rule/i })).toBeChecked();
+    expect(screen.getByRole('status')).toHaveTextContent(/rule stays enabled/i);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /restore dismissed warnings/i })[0]);
+
+    expect(within(screen.getByRole('list', { name: /prioritized findings/i })).getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getByRole('status')).toHaveTextContent(/dismissed warning restored/i);
+  });
+
+  it('shows explicit severity and confidence cues and announces review actions', async () => {
+    const draft = 'We utilize a robust workflow.';
+
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /skip tutorial/i }));
+
+    fireEvent.change(screen.getByLabelText(/single document workspace/i), { target: { value: draft } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    const request = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(request.requestId)?.resolve(createJobResult(request));
+      await flushPromises();
+    });
+
+    const list = screen.getByRole('list', { name: /prioritized findings/i });
+    const findingButton = within(list)
+      .getAllByRole('button')
+      .find((button) => button.textContent?.match(/complex wording/i) && button.textContent?.match(/severity: low/i));
+
+    fireEvent.click(findingButton as HTMLElement);
+
+    expect(screen.getAllByText(/severity: low/i).length).toBeGreaterThan(1);
+    expect(screen.getAllByText(/direct confidence/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/keyboard tip: use tab to move between the review list/i)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(/complex wording selected/i);
+
+    fireEvent.click(screen.getByRole('button', { name: /apply suggestion/i }));
+    expect(screen.getByRole('status')).toHaveTextContent(/suggestion applied for complex wording/i);
+  });
 });

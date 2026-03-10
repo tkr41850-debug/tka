@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Core Findings** - Initial rule pack returns prioritized technical-writing issues. (completed 2026-03-10)
 - [ ] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits.
 - [x] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases. (completed 2026-03-10)
-- [ ] **Phase 6: Trustworthy First-Run Access** - Tutorial, accessibility, and per-warning dismissals make the app usable and trustworthy.
+- [x] **Phase 6: Trustworthy First-Run Access** - Tutorial, accessibility, and per-warning dismissals make the app usable and trustworthy. (completed 2026-03-10)
 - [ ] **Phase 7: Local Continuity and Presets** - Same-browser return flows restore preferences, dismissals, presets, and optional draft recovery.
 
 ## Phase Details
@@ -104,7 +104,13 @@ Plans:
   1. User can complete or skip a brief first-run tutorial that introduces highlights, the issue list, and rule settings in under one minute.
   2. User can review warnings, settings, and suggestions with keyboard access, assistive announcements, and non-color-only severity cues.
   3. User can dismiss an individual warning in the current text without disabling the rule that found it.
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [x] `06-01-PLAN.md` - Add the session trust foundation for per-warning dismissals and assistive announcements.
+- [x] `06-02-PLAN.md` - Build the accessible first-run tutorial with skip, finish, and manual reopen flows.
+- [x] `06-03-PLAN.md` - Strengthen keyboard guidance, live announcements, and non-color review cues across the shipped UI.
+- [x] `06-04-PLAN.md` - Finish visible dismissal and restore actions and verify the full trust flow end to end.
 
 ### Phase 7: Local Continuity and Presets
 **Goal**: Users can come back on the same browser and resume their local workflow with saved preferences.
@@ -128,5 +134,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Core Findings | 3/3 | Complete | 2026-03-10 |
 | 4. Contextual Review and Guidance | 0/3 | Planned | - |
 | 5. Rule Tuning and Custom Detection | 4/4 | Complete | 2026-03-10 |
-| 6. Trustworthy First-Run Access | 0/TBD | Not started | - |
+| 6. Trustworthy First-Run Access | 4/4 | Complete | 2026-03-10 |
 | 7. Local Continuity and Presets | 0/TBD | Not started | - |

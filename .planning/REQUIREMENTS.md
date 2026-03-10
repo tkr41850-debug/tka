@@ -19,7 +19,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **REVW-01**: User can see inline highlights or underlines on the exact text spans that have detected issues.
 - [x] **REVW-02**: User can review detected issues in a prioritized list that shows severity, rule name, and location.
 - [ ] **REVW-03**: User can move from an issue-list entry to the matching text and back.
-- [ ] **REVW-04**: User can dismiss an individual warning in the current text without disabling the whole rule.
+- [x] **REVW-04**: User can dismiss an individual warning in the current text without disabling the whole rule.
 
 ### Guidance
 
@@ -51,8 +51,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Onboarding and Accessibility
 
-- [ ] **A11Y-01**: User can complete or skip a brief first-run tutorial that introduces highlights, the issue list, and rule settings in under one minute.
-- [ ] **A11Y-02**: User can review warnings, settings, and suggestions with keyboard access, assistive announcements, and non-color-only severity cues.
+- [x] **A11Y-01**: User can complete or skip a brief first-run tutorial that introduces highlights, the issue list, and rule settings in under one minute.
+- [x] **A11Y-02**: User can review warnings, settings, and suggestions with keyboard access, assistive announcements, and non-color-only severity cues.
 
 ### Responsiveness
 
@@ -101,7 +101,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REVW-01 | Phase 4 | Pending |
 | REVW-02 | Phase 3 | Complete |
 | REVW-03 | Phase 4 | Pending |
-| REVW-04 | Phase 6 | Pending |
+| REVW-04 | Phase 6 | Complete |
 | GUID-01 | Phase 4 | Pending |
 | GUID-02 | Phase 4 | Pending |
 | GUID-03 | Phase 4 | Pending |
@@ -118,8 +118,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLAR-07 | Phase 5 | Complete |
 | SAVE-01 | Phase 7 | Pending |
 | SAVE-02 | Phase 7 | Pending |
-| A11Y-01 | Phase 6 | Pending |
-| A11Y-02 | Phase 6 | Pending |
+| A11Y-01 | Phase 6 | Complete |
+| A11Y-02 | Phase 6 | Complete |
 | PERF-01 | Phase 1 | Complete |
 | PERF-02 | Phase 2 | Complete |
 
@@ -130,4 +130,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-08*
-*Last updated: 2026-03-10 after Phase 5 execution and verification*
+*Last updated: 2026-03-10 after Phase 6 execution and verification*

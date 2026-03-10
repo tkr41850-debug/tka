@@ -141,6 +141,7 @@ body::before {
 .badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 2.4rem;
   padding: 0.55rem 0.9rem;
   border-radius: 999px;
@@ -148,6 +149,13 @@ body::before {
   background: rgba(255, 248, 238, 0.94);
   font-size: 0.92rem;
   color: var(--ink);
+}
+
+.badge-button {
+  border: 1px solid rgba(181, 82, 43, 0.22);
+  background: rgba(255, 248, 238, 0.94);
+  color: var(--ink);
+  box-shadow: none;
 }
 
 .workspace-layout {
@@ -244,6 +252,11 @@ button:focus-visible,
   background: rgba(255, 247, 235, 0.84);
   color: var(--ink-soft);
   font-size: 0.92rem;
+}
+
+.button-inline {
+  width: fit-content;
+  padding: 0.65rem 0.95rem;
 }
 
 .analysis-status {
@@ -455,6 +468,12 @@ button:focus-visible,
   gap: 0.8rem;
 }
 
+.finding-actions {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.9rem 0.95rem;
+}
+
 .finding {
   border-radius: 1rem;
   border: 1px solid rgba(97, 71, 47, 0.12);
@@ -468,7 +487,7 @@ button:focus-visible,
 
 .finding-button {
   width: 100%;
-  padding: 0.9rem 0.95rem;
+  padding: 0;
   border-radius: inherit;
   background: transparent;
   color: inherit;
@@ -496,6 +515,7 @@ button:focus-visible,
 
 .finding-severity {
   display: inline-flex;
+  align-items: center;
   padding: 0.22rem 0.5rem;
   border-radius: 999px;
   font-family: var(--font-mono);
@@ -503,6 +523,20 @@ button:focus-visible,
   text-transform: uppercase;
   letter-spacing: 0.1em;
   background: rgba(255, 248, 238, 0.94);
+}
+
+.finding-confidence,
+.finding-active-label,
+.review-detail-tone {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.finding-active-label {
+  color: var(--accent-strong);
 }
 
 .finding-high .finding-severity {
@@ -518,7 +552,6 @@ button:focus-visible,
 }
 
 .finding-location,
-.finding-meta,
 .finding-explanation,
 .findings-empty {
   margin: 0.5rem 0 0;
@@ -642,8 +675,14 @@ button:focus-visible,
 .review-detail-copy,
 .review-detail-quote,
 .review-suggestions,
-.review-detail-panel > .button-secondary {
+.review-detail-actions {
   margin-top: 0.75rem;
+}
+
+.review-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .review-detail-location,
@@ -693,6 +732,73 @@ button:focus-visible,
 
 .finding-severity-low {
   color: var(--finding-low);
+}
+
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(33, 25, 16, 0.34);
+  backdrop-filter: blur(6px);
+}
+
+.tutorial-dialog {
+  width: min(34rem, 100%);
+  padding: 1.25rem;
+}
+
+.tutorial-progress-row,
+.tutorial-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.tutorial-dialog h2 {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.tutorial-copy {
+  margin: 0.8rem 0 0;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.tutorial-step-dots {
+  display: flex;
+  gap: 0.55rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tutorial-step-dot {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: rgba(95, 72, 50, 0.18);
+}
+
+.tutorial-step-dot.is-active {
+  background: var(--accent);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .finding blockquote {
@@ -756,6 +862,12 @@ button:focus-visible,
   .rule-threshold-grid,
   .custom-phrase-form {
     grid-template-columns: 1fr;
+  }
+
+  .tutorial-actions,
+  .review-detail-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .findings-header {

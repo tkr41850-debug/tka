@@ -8,14 +8,27 @@ type WorkspaceSnapshotProps = {
   readyMs: number;
   activeFindingId: string | null;
   settings: AnalysisSettings;
+  dismissedCount: number;
   onSelectFinding: (findingId: string) => void;
+  onDismissFinding: (findingId: string) => void;
+  onRestoreDismissedFindings: () => void;
 };
 
 function formatFindingConfidence(confidence: DraftAnalysis['findings'][number]['confidence']) {
   return confidence === 'heuristic' ? 'Likely' : 'Direct';
 }
 
-export function WorkspaceSnapshot({ analysis, analysisState, readyMs, activeFindingId, settings, onSelectFinding }: WorkspaceSnapshotProps) {
+export function WorkspaceSnapshot({
+  analysis,
+  analysisState,
+  readyMs,
+  activeFindingId,
+  settings,
+  dismissedCount,
+  onSelectFinding,
+  onDismissFinding,
+  onRestoreDismissedFindings,
+}: WorkspaceSnapshotProps) {
   const { snapshot, findings } = analysis;
   const statusLabel = analysisState === 'fresh' ? 'Current' : analysisState === 'error' ? 'Needs refresh' : analysisState;
   const statusMessage =
@@ -65,6 +78,18 @@ export function WorkspaceSnapshot({ analysis, analysisState, readyMs, activeFind
         </span>
       </div>
 
+      {dismissedCount > 0 ? (
+        <div className="status-strip dismissed-summary" aria-label="dismissed warning summary">
+          <span className="analysis-status-label">Session dismissals</span>
+          <span>
+            {dismissedCount} warning{dismissedCount === 1 ? '' : 's'} hidden for this session only. Their rules stay enabled.
+          </span>
+          <button type="button" className="button-secondary button-inline" onClick={onRestoreDismissedFindings}>
+            Restore dismissed warnings
+          </button>
+        </div>
+      ) : null}
+
       <div className="metric-grid" role="list" aria-label="snapshot metrics">
         <article className="metric-card" role="listitem">
           <span>Words</span>
@@ -99,16 +124,29 @@ export function WorkspaceSnapshot({ analysis, analysisState, readyMs, activeFind
             <ol className="findings-list" aria-label="prioritized findings">
               {findings.map((finding) => (
                 <li key={finding.id} className={`finding finding-${finding.severity} ${finding.id === activeFindingId ? 'finding-active' : ''}`}>
-                  <button type="button" className="finding-button" onClick={() => onSelectFinding(finding.id)}>
-                    <div className="finding-topline">
-                      <span className="finding-severity">{finding.severity}</span>
+                  <div className="finding-actions">
+                    <button type="button" className="finding-button" onClick={() => onSelectFinding(finding.id)}>
+                      <div className="finding-topline">
+                        <span className={`finding-severity finding-severity-${finding.severity}`}>Severity: {finding.severity}</span>
+                        <span className="finding-confidence">{formatFindingConfidence(finding.confidence)} confidence</span>
+                        {finding.id === activeFindingId ? <span className="finding-active-label">Active</span> : null}
+                      </div>
+                      <div className="finding-topline">
                       <strong>{finding.ruleLabel}</strong>
                       <span className="finding-location">{finding.location.label}</span>
-                    </div>
-                    <p className="finding-explanation">{finding.explanation}</p>
-                    <p className="finding-meta">{formatFindingConfidence(finding.confidence)} confidence match</p>
-                    <blockquote>{finding.matchedText}</blockquote>
-                  </button>
+                      </div>
+                      <p className="finding-explanation">{finding.explanation}</p>
+                      <blockquote>{finding.matchedText}</blockquote>
+                    </button>
+                    <button
+                      type="button"
+                      className="button-secondary button-inline"
+                      onClick={() => onDismissFinding(finding.id)}
+                      aria-label={`Dismiss warning for ${finding.ruleLabel}`}
+                    >
+                      Dismiss warning
+                    </button>
+                  </div>
                 </li>
               ))}
             </ol>

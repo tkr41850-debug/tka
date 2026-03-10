@@ -72,6 +72,7 @@ export function RuleSettingsPanel({
           ? 'Current findings already reflect these settings.'
           : 'The review refreshes in the background as these settings change.'}
       </p>
+      <p className="rule-settings-copy">Use native checkboxes and number fields to tune the local review without leaving the keyboard.</p>
 
       <div className="rule-settings-list" role="list" aria-label="rule settings">
         {ANALYSIS_RULE_ORDER.map((ruleId) => (
@@ -84,6 +85,7 @@ export function RuleSettingsPanel({
               type="checkbox"
               checked={settings.enabledRules[ruleId]}
               onChange={(event) => onToggleRule(ruleId, event.target.checked)}
+              aria-label={`${ANALYSIS_RULE_LABELS[ruleId]} rule`}
             />
           </label>
         ))}
@@ -98,6 +100,7 @@ export function RuleSettingsPanel({
             max={80}
             value={settings.thresholds.sentenceWordLimit}
             onChange={(event) => onThresholdChange('sentenceWordLimit', Number(event.target.value))}
+            aria-describedby="rule-settings-heading"
           />
         </label>
 
@@ -109,6 +112,7 @@ export function RuleSettingsPanel({
             max={20}
             value={settings.thresholds.paragraphSentenceLimit}
             onChange={(event) => onThresholdChange('paragraphSentenceLimit', Number(event.target.value))}
+            aria-describedby="rule-settings-heading"
           />
         </label>
       </div>
