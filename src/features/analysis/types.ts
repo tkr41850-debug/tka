@@ -15,7 +15,18 @@ export type DraftFindingLocation = {
   paragraphNumber?: number;
 };
 
+export type FindingSuggestion = {
+  id: string;
+  label: string;
+  description: string;
+  kind: 'replace' | 'example';
+  exampleText: string;
+  replacementText?: string;
+  isAutoApplicable: boolean;
+};
+
 export type DraftFinding = {
+  id: string;
   ruleId: string;
   ruleLabel: string;
   severity: FindingSeverity;
@@ -24,6 +35,7 @@ export type DraftFinding = {
   matchedText: string;
   location: DraftFindingLocation;
   rulePriority: number;
+  suggestions: FindingSuggestion[];
 };
 
 export type DraftAnalysis = {

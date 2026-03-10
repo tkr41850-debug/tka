@@ -49,4 +49,26 @@ describe('analyzeDraft', () => {
 
     expect(analysis.findings.map((finding) => finding.matchedText)).toEqual(['Please note', 'In order to', 'simply', 'will']);
   });
+
+  it('adds stable ids and deterministic plain-language suggestions for complex wording', () => {
+    const analysis = analyzeDraft('We utilize a robust workflow to facilitate faster reviews.');
+
+    expect(analysis.findings.map((finding) => finding.ruleId)).toEqual([
+      'complex-wording',
+      'complex-wording',
+      'complex-wording',
+    ]);
+
+    expect(analysis.findings[0]).toMatchObject({
+      id: 'complex-wording:3:10',
+      matchedText: 'utilize',
+      suggestions: [
+        {
+          kind: 'replace',
+          replacementText: 'use',
+          isAutoApplicable: true,
+        },
+      ],
+    });
+  });
 });

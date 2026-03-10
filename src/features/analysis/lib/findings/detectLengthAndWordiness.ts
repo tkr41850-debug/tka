@@ -5,12 +5,30 @@ export const DEFAULT_SENTENCE_WORD_LIMIT = 28;
 export const DEFAULT_PARAGRAPH_SENTENCE_LIMIT = 6;
 
 const FILLER_PHRASES = [
-  'in order to',
-  'please note',
-  'simply',
-  'just',
-  'at this point in time',
-  'due to the fact that',
+  {
+    phrase: 'in order to',
+    replacement: 'to',
+  },
+  {
+    phrase: 'please note',
+    replacement: 'note',
+  },
+  {
+    phrase: 'simply',
+    replacement: '',
+  },
+  {
+    phrase: 'just',
+    replacement: '',
+  },
+  {
+    phrase: 'at this point in time',
+    replacement: 'now',
+  },
+  {
+    phrase: 'due to the fact that',
+    replacement: 'because',
+  },
 ] as const;
 
 function createSentenceLabel(sentenceNumber: number, paragraphNumber: number) {
@@ -27,6 +45,7 @@ export function detectLengthAndWordiness(parsedDraft: ParsedDraft): DraftFinding
   for (const sentence of parsedDraft.sentences) {
     if (sentence.wordCount > DEFAULT_SENTENCE_WORD_LIMIT) {
       findings.push({
+        id: '',
         ruleId: 'long-sentence',
         ruleLabel: 'Long sentence',
         severity: 'high',
@@ -42,6 +61,7 @@ export function detectLengthAndWordiness(parsedDraft: ParsedDraft): DraftFinding
           paragraphNumber: sentence.paragraphNumber,
         },
         rulePriority: 10,
+        suggestions: [],
       });
     }
   }
@@ -49,6 +69,7 @@ export function detectLengthAndWordiness(parsedDraft: ParsedDraft): DraftFinding
   for (const paragraph of parsedDraft.paragraphs) {
     if (paragraph.sentenceCount > DEFAULT_PARAGRAPH_SENTENCE_LIMIT) {
       findings.push({
+        id: '',
         ruleId: 'long-paragraph',
         ruleLabel: 'Long paragraph',
         severity: 'medium',
@@ -63,12 +84,13 @@ export function detectLengthAndWordiness(parsedDraft: ParsedDraft): DraftFinding
           paragraphNumber: paragraph.paragraphNumber,
         },
         rulePriority: 20,
+        suggestions: [],
       });
     }
   }
 
   for (const phrase of FILLER_PHRASES) {
-    const pattern = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&').replace(/ /g, '\\s+')}\\b`, 'gi');
+    const pattern = new RegExp(`\\b${phrase.phrase.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&').replace(/ /g, '\\s+')}\\b`, 'gi');
 
     for (const match of parsedDraft.text.matchAll(pattern)) {
       const start = match.index ?? 0;
@@ -83,6 +105,7 @@ export function detectLengthAndWordiness(parsedDraft: ParsedDraft): DraftFinding
           : 'Draft';
 
       findings.push({
+        id: '',
         ruleId: 'filler-phrase',
         ruleLabel: 'Wordy phrase',
         severity: 'medium',
@@ -98,6 +121,19 @@ export function detectLengthAndWordiness(parsedDraft: ParsedDraft): DraftFinding
           paragraphNumber: paragraph?.paragraphNumber,
         },
         rulePriority: 30,
+        suggestions: [
+          {
+            id: `${phrase.phrase}-plain-language`,
+            label: phrase.replacement ? `Use "${phrase.replacement}" instead` : 'Remove this extra wording',
+            description: phrase.replacement
+              ? 'This replacement keeps the sentence intent while cutting extra words.'
+              : 'This phrase can usually be removed without losing the instruction.',
+            kind: 'replace',
+            exampleText: phrase.replacement || '(remove this phrase)',
+            replacementText: phrase.replacement,
+            isAutoApplicable: true,
+          },
+        ],
       });
     }
   }

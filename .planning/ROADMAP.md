@@ -73,7 +73,12 @@ Plans:
   3. User can open a warning and understand why it fired through a short explanation.
   4. User sees targeted rewrite suggestions or examples for supported rules, including simpler alternatives for jargon or overly complex wording when available.
   5. User can apply a safe suggested rewrite and undo that change.
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] `04-01-PLAN.md` - Extend findings with explanation and suggestion metadata, add complex-wording detection, and build the safe rewrite helper.
+- [ ] `04-02-PLAN.md` - Add inline highlights, active issue navigation, and a focused explanation panel around the existing textarea.
+- [ ] `04-03-PLAN.md` - Wire supported suggestion apply-and-undo actions and verify contextual review end to end.
 
 ### Phase 5: Rule Tuning and Custom Detection
 **Goal**: Users can tune what the analyzer checks and what counts as a violation for their writing style.
@@ -115,7 +120,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Local Workspace Foundation | 2/2 | Complete | 2026-03-09 |
 | 2. Responsive Analysis Loop | 2/2 | Complete | 2026-03-10 |
 | 3. Core Findings | 3/3 | Complete | 2026-03-10 |
-| 4. Contextual Review and Guidance | 0/TBD | Not started | - |
+| 4. Contextual Review and Guidance | 0/3 | Planned | - |
 | 5. Rule Tuning and Custom Detection | 0/TBD | Not started | - |
 | 6. Trustworthy First-Run Access | 0/TBD | Not started | - |
 | 7. Local Continuity and Presets | 0/TBD | Not started | - |

@@ -6,13 +6,15 @@ type WorkspaceSnapshotProps = {
   analysis: DraftAnalysis;
   analysisState: AnalysisState;
   readyMs: number;
+  activeFindingId: string | null;
+  onSelectFinding: (findingId: string) => void;
 };
 
 function formatFindingConfidence(confidence: DraftAnalysis['findings'][number]['confidence']) {
   return confidence === 'heuristic' ? 'Likely' : 'Direct';
 }
 
-export function WorkspaceSnapshot({ analysis, analysisState, readyMs }: WorkspaceSnapshotProps) {
+export function WorkspaceSnapshot({ analysis, analysisState, readyMs, activeFindingId, onSelectFinding }: WorkspaceSnapshotProps) {
   const { snapshot, findings } = analysis;
   const statusLabel = analysisState === 'fresh' ? 'Current' : analysisState === 'error' ? 'Needs refresh' : analysisState;
   const statusMessage =
@@ -80,20 +82,22 @@ export function WorkspaceSnapshot({ analysis, analysisState, readyMs }: Workspac
         {findings.length === 0 ? (
           <p className="findings-empty">No core findings detected in the current draft.</p>
         ) : (
-          <ol className="findings-list" aria-label="prioritized findings">
-            {findings.map((finding) => (
-              <li key={`${finding.ruleId}-${finding.location.start}-${finding.location.end}`} className={`finding finding-${finding.severity}`}>
-                <div className="finding-topline">
-                  <span className="finding-severity">{finding.severity}</span>
-                  <strong>{finding.ruleLabel}</strong>
-                  <span className="finding-location">{finding.location.label}</span>
-                </div>
-                <p className="finding-explanation">{finding.explanation}</p>
-                <p className="finding-meta">{formatFindingConfidence(finding.confidence)} confidence match</p>
-                <blockquote>{finding.matchedText}</blockquote>
-              </li>
-            ))}
-          </ol>
+            <ol className="findings-list" aria-label="prioritized findings">
+              {findings.map((finding) => (
+                <li key={finding.id} className={`finding finding-${finding.severity} ${finding.id === activeFindingId ? 'finding-active' : ''}`}>
+                  <button type="button" className="finding-button" onClick={() => onSelectFinding(finding.id)}>
+                    <div className="finding-topline">
+                      <span className="finding-severity">{finding.severity}</span>
+                      <strong>{finding.ruleLabel}</strong>
+                      <span className="finding-location">{finding.location.label}</span>
+                    </div>
+                    <p className="finding-explanation">{finding.explanation}</p>
+                    <p className="finding-meta">{formatFindingConfidence(finding.confidence)} confidence match</p>
+                    <blockquote>{finding.matchedText}</blockquote>
+                  </button>
+                </li>
+              ))}
+            </ol>
         )}
       </section>
 

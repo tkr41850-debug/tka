@@ -81,7 +81,7 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByRole('heading', { name: /technical writing assistant/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /background analysis/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /contextual review/i })).toBeInTheDocument();
     expect(screen.getByText(/single source workspace/i)).toBeInTheDocument();
     expect(screen.getByText(/snapshot is current/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /refresh now/i })).toBeInTheDocument();
@@ -213,5 +213,92 @@ describe('App', () => {
 
     expect(screen.getByText(recoverySummary)).toBeInTheDocument();
     expect(screen.getByText(/snapshot is current/i)).toBeInTheDocument();
+  });
+
+  it('navigates from a finding to the editor and shows detail guidance', async () => {
+    const draft = 'Please note that we utilize direct verbs.';
+    const setSelectionRangeSpy = vi.spyOn(HTMLTextAreaElement.prototype, 'setSelectionRange');
+
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText(/single document workspace/i), { target: { value: draft } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    const request = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(request.requestId)?.resolve(createJobResult(request));
+      await flushPromises();
+    });
+
+    const list = screen.getByRole('list', { name: /prioritized findings/i });
+    const complexWordingButton = within(list)
+      .getAllByRole('button')
+      .find((button) => button.textContent?.match(/complex wording/i));
+
+    expect(complexWordingButton).toBeTruthy();
+
+    fireEvent.click(complexWordingButton as HTMLElement);
+
+    expect(screen.getByRole('heading', { name: /complex wording/i })).toBeInTheDocument();
+    expect(screen.getByText(/use "use" instead/i)).toBeInTheDocument();
+    expect(screen.getByText(/active review span: sentence 1 in paragraph 1/i)).toBeInTheDocument();
+    expect(setSelectionRangeSpy).toHaveBeenCalled();
+
+    setSelectionRangeSpy.mockRestore();
+  });
+
+  it('applies a supported suggestion, reanalyzes immediately, and supports one-step undo', async () => {
+    const draft = 'We utilize a robust workflow.';
+
+    render(<App />);
+
+    const editor = screen.getByLabelText(/single document workspace/i);
+
+    fireEvent.change(editor, { target: { value: draft } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    const initialRequest = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(initialRequest.requestId)?.resolve(createJobResult(initialRequest));
+      await flushPromises();
+    });
+
+    const list = screen.getByRole('list', { name: /prioritized findings/i });
+    const complexWordingButton = within(list)
+      .getAllByRole('button')
+      .find((button) => button.textContent?.match(/complex wording/i) && button.textContent?.match(/utilize/i));
+
+    fireEvent.click(complexWordingButton as HTMLElement);
+    fireEvent.click(screen.getByRole('button', { name: /apply suggestion/i }));
+
+    expect(editor).toHaveValue('We use a robust workflow.');
+    expect(workerClientMocks.analyze).toHaveBeenCalledTimes(2);
+
+    const applyRequest = workerClientMocks.analyze.mock.calls[1]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(applyRequest.requestId)?.resolve(createJobResult(applyRequest));
+      await flushPromises();
+    });
+
+    expect(screen.queryByText(/utilize/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /undo last rewrite/i })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole('button', { name: /undo last rewrite/i }));
+
+    expect(editor).toHaveValue('We utilize a robust workflow.');
+    expect(workerClientMocks.analyze).toHaveBeenCalledTimes(3);
+
+    const undoRequest = workerClientMocks.analyze.mock.calls[2]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(undoRequest.requestId)?.resolve(createJobResult(undoRequest));
+      await flushPromises();
+    });
+
+    expect(screen.getByRole('heading', { name: /complex wording/i })).toBeInTheDocument();
+    expect(screen.getByDisplayValue('We utilize a robust workflow.')).toBeInTheDocument();
   });
 });

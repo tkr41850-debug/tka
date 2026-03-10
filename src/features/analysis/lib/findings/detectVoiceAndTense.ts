@@ -25,6 +25,7 @@ export function detectVoiceAndTense(parsedDraft: ParsedDraft): DraftFinding[] {
         const hasByPhrase = /\bby\b/i.test(sentence.text.slice((passiveMatch.index ?? 0) + matchedText.length));
 
         findings.push({
+          id: '',
           ruleId: 'passive-voice',
           ruleLabel: 'Likely passive voice',
           severity: 'low',
@@ -42,6 +43,7 @@ export function detectVoiceAndTense(parsedDraft: ParsedDraft): DraftFinding[] {
             paragraphNumber: sentence.paragraphNumber,
           },
           rulePriority: 40,
+          suggestions: [],
         });
       }
     }
@@ -54,6 +56,7 @@ export function detectVoiceAndTense(parsedDraft: ParsedDraft): DraftFinding[] {
       const tenseEnd = tenseStart + matchedText.length;
 
       findings.push({
+        id: '',
         ruleId: 'tense-drift',
         ruleLabel: 'Likely tense drift',
         severity: 'low',
@@ -69,6 +72,7 @@ export function detectVoiceAndTense(parsedDraft: ParsedDraft): DraftFinding[] {
           paragraphNumber: sentence.paragraphNumber,
         },
         rulePriority: 50,
+        suggestions: [],
       });
     }
   }

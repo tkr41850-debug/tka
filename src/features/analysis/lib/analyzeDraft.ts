@@ -1,5 +1,6 @@
 import { createLocalSnapshot } from '../../workspace/lib/createLocalSnapshot';
 import type { DraftAnalysis, DraftFinding, FindingSeverity } from '../types';
+import { detectComplexWording } from './findings/detectComplexWording';
 import { detectLengthAndWordiness } from './findings/detectLengthAndWordiness';
 import { detectVoiceAndTense } from './findings/detectVoiceAndTense';
 import { parseDraft } from './parseDraft';
@@ -19,9 +20,22 @@ function compareFindings(left: DraftFinding, right: DraftFinding) {
   );
 }
 
+function attachFindingId(finding: Omit<DraftFinding, 'id'> | DraftFinding): DraftFinding {
+  return {
+    ...finding,
+    id: `${finding.ruleId}:${finding.location.start}:${finding.location.end}`,
+  };
+}
+
 export function analyzeDraft(text: string): DraftAnalysis {
   const parsedDraft = parseDraft(text);
-  const findings = [...detectLengthAndWordiness(parsedDraft), ...detectVoiceAndTense(parsedDraft)].sort(compareFindings);
+  const findings = [
+    ...detectLengthAndWordiness(parsedDraft),
+    ...detectComplexWording(parsedDraft),
+    ...detectVoiceAndTense(parsedDraft),
+  ]
+    .sort(compareFindings)
+    .map(attachFindingId);
 
   return {
     snapshot: createLocalSnapshot(text),
