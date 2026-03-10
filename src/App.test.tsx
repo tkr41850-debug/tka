@@ -37,12 +37,17 @@ const workerClientMocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('./features/analysis/lib/createAnalysisWorkerClient', () => ({
-  createAnalysisWorkerClient: vi.fn(() => ({
-    analyze: workerClientMocks.analyze,
-    dispose: workerClientMocks.dispose,
-  })),
-}));
+vi.mock('./features/analysis/lib/createAnalysisWorkerClient', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./features/analysis/lib/createAnalysisWorkerClient')>();
+
+  return {
+    ...actual,
+    createAnalysisWorkerClient: vi.fn(() => ({
+      analyze: workerClientMocks.analyze,
+      dispose: workerClientMocks.dispose,
+    })),
+  };
+});
 
 function createJobResult(request: AnalysisJobRequest): AnalysisJobResult {
   return {
@@ -75,6 +80,7 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByRole('heading', { name: /technical writing assistant/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /background analysis/i })).toBeInTheDocument();
     expect(screen.getByText(/single source workspace/i)).toBeInTheDocument();
     expect(screen.getByText(/snapshot is current/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /refresh now/i })).toBeInTheDocument();
@@ -126,5 +132,78 @@ describe('App', () => {
 
     expect(editor).toHaveValue(sampleDraft);
     expect(screen.getByText(/background refresh queued/i)).toBeInTheDocument();
+  });
+
+  it('refreshes immediately and accepts only the newest result after quick edits', async () => {
+    render(<App />);
+
+    const editor = screen.getByLabelText(/single document workspace/i);
+    const newestDraft = 'Newest draft wins.';
+    const newestSummary = formatSnapshotSummary(createLocalSnapshot(newestDraft));
+
+    fireEvent.change(editor, { target: { value: 'First draft.' } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    const firstRequest = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+
+    fireEvent.change(editor, { target: { value: newestDraft } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    expect(workerClientMocks.analyze).toHaveBeenCalledTimes(2);
+
+    const newestRequest = workerClientMocks.analyze.mock.calls[1]?.[0] as AnalysisJobRequest;
+    expect(newestRequest.draft).toBe(newestDraft);
+
+    await act(async () => {
+      workerClientMocks.pending.get(firstRequest.requestId)?.resolve(createJobResult(firstRequest));
+      await flushPromises();
+    });
+
+    expect(screen.queryByText('2 words across 1 sentence and 1 paragraph.')).not.toBeInTheDocument();
+    expect(screen.getByText(/last accepted result while a newer refresh is pending/i)).toBeInTheDocument();
+
+    await act(async () => {
+      workerClientMocks.pending.get(newestRequest.requestId)?.resolve(createJobResult(newestRequest));
+      await flushPromises();
+    });
+
+    expect(screen.getByText(newestSummary)).toBeInTheDocument();
+    expect(screen.getByText(/matches the latest saved draft in memory/i)).toBeInTheDocument();
+  });
+
+  it('shows failed freshness guidance until the next refresh succeeds', async () => {
+    render(<App />);
+
+    const editor = screen.getByLabelText(/single document workspace/i);
+    const recoveryDraft = 'Recover with a newer result.';
+    const recoverySummary = formatSnapshotSummary(createLocalSnapshot(recoveryDraft));
+
+    fireEvent.change(editor, { target: { value: recoveryDraft } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    const failedRequest = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(failedRequest.requestId)?.reject(new Error('Worker offline'));
+      await flushPromises();
+    });
+
+    expect(screen.getByText(/background refresh failed/i)).toBeInTheDocument();
+    expect(screen.getByText(/older than your latest draft because the newest refresh failed/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /refresh now/i }));
+
+    const recoveryRequest = workerClientMocks.analyze.mock.calls[1]?.[0] as AnalysisJobRequest;
+
+    await act(async () => {
+      workerClientMocks.pending.get(recoveryRequest.requestId)?.resolve(createJobResult(recoveryRequest));
+      await flushPromises();
+    });
+
+    expect(screen.getByText(recoverySummary)).toBeInTheDocument();
+    expect(screen.getByText(/snapshot is current/i)).toBeInTheDocument();
   });
 });
