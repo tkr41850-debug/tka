@@ -59,14 +59,14 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="hero-panel panel">
-        <p className="eyebrow">Phase 1 / Local Workspace Foundation</p>
+        <p className="eyebrow">Phase 2 / Responsive Analysis Loop</p>
         <div className="hero-copy">
           <div>
             <h1>Technical Writing Assistant</h1>
             <p className="hero-text">
-              Draft faster with a single local workspace designed for technical writing. This foundation keeps
-              everything in the browser and proves the analysis entry point without accounts, uploads, or cloud
-              processing.
+              Keep writing while browser-local analysis refreshes in the background. This loop keeps the latest
+              accepted snapshot visible, never sends text off-device, and makes freshness explicit before you trust
+              the result.
             </p>
           </div>
 
@@ -103,9 +103,9 @@ export default function App() {
           <div className="panel-heading">
             <div>
               <p className="panel-label">Analysis</p>
-              <h2>Local-only first pass</h2>
+              <h2>Background analysis</h2>
             </div>
-            <p className="panel-meta">No uploads</p>
+            <p className="panel-meta">Queued, running, current</p>
           </div>
 
           <WorkspaceSnapshot snapshot={snapshot} analysisState={analysisState} readyMs={readyMs} />
