@@ -68,10 +68,23 @@ Each task was committed atomically:
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 3 - Blocking] Updated planning state files manually after `gsd-tools` could not parse the legacy STATE format**
+- **Found during:** final state updates
+- **Issue:** `state advance-plan`, `state update-progress`, and `state record-session` could not update `.planning/STATE.md` because the existing file format did not match the tool's expected fields.
+- **Fix:** Updated `.planning/STATE.md`, `.planning/ROADMAP.md`, and `.planning/REQUIREMENTS.md` manually after running the available helper commands so the completed plan, progress, and requirement status still landed correctly.
+- **Files modified:** `.planning/STATE.md`, `.planning/ROADMAP.md`, `.planning/REQUIREMENTS.md`, `.planning/phases/02-responsive-analysis-loop/02-02-SUMMARY.md`
+- **Verification:** Confirmed the files reflect Phase 2 plan 02 completion and committed them in the docs metadata step.
+- **Committed in:** `ba7b351` (docs metadata commit)
+
+---
+
+**Total deviations:** 1 auto-fixed (1 blocking)
+**Impact on plan:** The workaround was limited to planning metadata so product scope and shipped app behavior stayed unchanged.
 
 ## Issues Encountered
-None.
+- `gsd-tools` state helpers expected a newer STATE.md shape than this repo currently stores, so the execution metadata had to be finished manually after the helper commands partially succeeded.
 
 ## User Setup Required
 
