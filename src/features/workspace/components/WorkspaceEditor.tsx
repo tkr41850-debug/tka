@@ -19,6 +19,17 @@ export function WorkspaceEditor({
   onClear,
   onLoadSample,
 }: WorkspaceEditorProps) {
+  const editorStatusCopy =
+    analysisState === 'queued'
+      ? 'Background refresh queued. Keep typing while the current analysis stays visible.'
+      : analysisState === 'running'
+        ? 'Background analysis is running. You can keep editing while a fresher result is prepared.'
+        : analysisState === 'error'
+          ? 'Background refresh failed. The visible analysis is older than your latest draft until you refresh again.'
+          : analysisState === 'fresh'
+            ? 'Current draft and visible analysis match.'
+            : 'Draft changed since the last snapshot.';
+
   return (
     <div className="workspace-stack">
       <div className="workspace-toolbar">
@@ -29,12 +40,12 @@ export function WorkspaceEditor({
           Clear draft
         </button>
         <button type="button" className="button-primary" onClick={onAnalyze}>
-          Run local snapshot
+          Refresh now
         </button>
       </div>
 
-      <div className="workspace-meta" aria-live="polite">
-        <span>{analysisState === 'fresh' ? 'Current draft is in sync.' : 'Draft changed since the last snapshot.'}</span>
+      <div className={`workspace-meta analysis-status analysis-status-${analysisState}`} aria-live="polite">
+        <span>{editorStatusCopy}</span>
         <span>{draftCharacters} characters in the active document.</span>
       </div>
 

@@ -8,6 +8,7 @@ type WorkspaceSnapshotProps = {
 };
 
 export function WorkspaceSnapshot({ snapshot, analysisState, readyMs }: WorkspaceSnapshotProps) {
+  const statusLabel = analysisState === 'fresh' ? 'Current' : analysisState === 'error' ? 'Needs refresh' : analysisState;
   const statusMessage =
     analysisState === 'queued'
       ? 'Background analysis is queued for your latest draft.'
@@ -18,16 +19,24 @@ export function WorkspaceSnapshot({ snapshot, analysisState, readyMs }: Workspac
           : analysisState === 'fresh'
             ? 'Snapshot is current.'
             : 'Draft changed since the last snapshot.';
+  const freshnessCopy =
+    analysisState === 'fresh'
+      ? 'The visible analysis matches the latest saved draft in memory.'
+      : analysisState === 'error'
+        ? 'The visible analysis is older than your latest draft because the newest refresh failed.'
+        : 'The visible analysis is still the last accepted result while a newer refresh is pending.';
 
   return (
     <div className="snapshot-stack">
-      <div className="status-strip" aria-live="polite">
-        {statusMessage}
+      <div className={`status-strip analysis-status analysis-status-${analysisState}`} aria-live="polite">
+        <span className="analysis-status-label">Background analysis · {statusLabel}</span>
+        <span>{statusMessage}</span>
       </div>
 
       <div className="snapshot-summary">
         <p className="snapshot-label">Local snapshot</p>
         <h3>{formatSnapshotSummary(snapshot)}</h3>
+        <p className="snapshot-freshness">{freshnessCopy}</p>
         <p>
           This phase keeps analysis intentionally lightweight so the product can prove a browser-local handoff
           before rule warnings and rewrites arrive in later milestones.

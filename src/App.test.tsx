@@ -77,6 +77,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: /technical writing assistant/i })).toBeInTheDocument();
     expect(screen.getByText(/single source workspace/i)).toBeInTheDocument();
     expect(screen.getByText(/snapshot is current/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /refresh now/i })).toBeInTheDocument();
   });
 
   it('queues background analysis after typing pauses while keeping the editor editable', async () => {
@@ -92,7 +93,7 @@ describe('App', () => {
     fireEvent.change(editor, { target: { value: nextDraft } });
 
     expect(editor).toHaveValue(nextDraft);
-    expect(screen.getByText(/draft changed since the last snapshot/i)).toBeInTheDocument();
+    expect(screen.getByText(/background refresh queued/i)).toBeInTheDocument();
     expect(screen.getByText(initialSummary)).toBeInTheDocument();
     expect(workerClientMocks.analyze).not.toHaveBeenCalled();
 
@@ -124,6 +125,6 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: /replace with starter draft/i }));
 
     expect(editor).toHaveValue(sampleDraft);
-    expect(screen.getByText(/draft changed since the last snapshot/i)).toBeInTheDocument();
+    expect(screen.getByText(/background refresh queued/i)).toBeInTheDocument();
   });
 });
