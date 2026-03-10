@@ -12,7 +12,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **WORK-01**: User can paste, type, or replace one text source in a single browser workspace.
 - [x] **WORK-02**: User can analyze the current text without the app sending that text off the website.
 - [x] **WORK-03**: User can keep editing while analysis runs in the background.
-- [ ] **WORK-04**: User can trigger a fresh analysis after text changes without reloading the page.
+- [x] **WORK-04**: User can trigger a fresh analysis after text changes without reloading the page.
 
 ### Review
 
@@ -97,7 +97,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WORK-01 | Phase 1 | Complete |
 | WORK-02 | Phase 1 | Complete |
 | WORK-03 | Phase 2 | Complete |
-| WORK-04 | Phase 2 | Pending |
+| WORK-04 | Phase 2 | Complete |
 | REVW-01 | Phase 4 | Pending |
 | REVW-02 | Phase 3 | Pending |
 | REVW-03 | Phase 4 | Pending |
@@ -130,4 +130,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-08*
-*Last updated: 2026-03-09 after Phase 2 plan 01 execution and verification*
+*Last updated: 2026-03-10 after Phase 2 plan 02 execution and verification*

@@ -13,7 +13,7 @@ This roadmap turns the narrowed boundary into seven dependency-aware phases: est
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Local Workspace Foundation** - Fast static shell for one local text source and no-cloud analysis entry. (completed 2026-03-09)
-- [ ] **Phase 2: Responsive Analysis Loop** - Background browser-local analysis refreshes without blocking writing.
+- [x] **Phase 2: Responsive Analysis Loop** - Background browser-local analysis refreshes without blocking writing. (completed 2026-03-10)
 - [ ] **Phase 3: Core Findings** - Initial rule pack returns prioritized technical-writing issues.
 - [ ] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits.
 - [ ] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases.
@@ -46,7 +46,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] `02-01-PLAN.md` - Build the background worker protocol, client, and debounced scheduler for local analysis.
-- [ ] `02-02-PLAN.md` - Integrate automatic refresh, live analysis states, and end-to-end verification into the workspace UI.
+- [x] `02-02-PLAN.md` - Integrate automatic refresh, live analysis states, and end-to-end verification into the workspace UI.
 
 ### Phase 3: Core Findings
 **Goal**: Users can receive a trustworthy first pass of prioritized technical-writing findings.
@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Local Workspace Foundation | 2/2 | Complete | 2026-03-09 |
-| 2. Responsive Analysis Loop | 1/2 | In Progress | - |
+| 2. Responsive Analysis Loop | 2/2 | Complete | 2026-03-10 |
 | 3. Core Findings | 0/TBD | Not started | - |
 | 4. Contextual Review and Guidance | 0/TBD | Not started | - |
 | 5. Rule Tuning and Custom Detection | 0/TBD | Not started | - |
