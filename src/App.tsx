@@ -1,35 +1,59 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { sampleDraft } from './features/workspace/data/sampleDraft';
 import { WorkspaceEditor } from './features/workspace/components/WorkspaceEditor';
 import { WorkspaceSnapshot } from './features/workspace/components/WorkspaceSnapshot';
 import { createLocalSnapshot } from './features/workspace/lib/createLocalSnapshot';
 import type { AnalysisState } from './features/workspace/types';
 import { getReadyLatencyMs } from './lib/bootMetrics';
+import { createAnalysisWorkerClient } from './features/analysis/lib/createAnalysisWorkerClient';
+import { createAnalysisScheduler } from './features/analysis/lib/createAnalysisScheduler';
 
 export default function App() {
   const [draft, setDraft] = useState(sampleDraft);
   const [snapshot, setSnapshot] = useState(() => createLocalSnapshot(sampleDraft));
   const [analysisState, setAnalysisState] = useState<AnalysisState>('fresh');
   const [readyMs] = useState(() => getReadyLatencyMs());
+  const schedulerRef = useRef<ReturnType<typeof createAnalysisScheduler> | null>(null);
+
+  useEffect(() => {
+    const client = createAnalysisWorkerClient();
+    const scheduler = createAnalysisScheduler({
+      client,
+      onResult: (result) => {
+        setSnapshot(result.snapshot);
+      },
+      onStateChange: (lifecycle) => {
+        setAnalysisState(lifecycle.state);
+      },
+    });
+
+    schedulerRef.current = scheduler;
+
+    return () => {
+      scheduler.dispose();
+      schedulerRef.current = null;
+    };
+  }, []);
+
+  function queueDraftAnalysis(nextDraft: string) {
+    setDraft(nextDraft);
+    schedulerRef.current?.queue(nextDraft);
+  }
 
   function handleDraftChange(nextDraft: string) {
-    setDraft(nextDraft);
-    setAnalysisState('stale');
+    queueDraftAnalysis(nextDraft);
   }
 
   function handleAnalyze() {
-    setSnapshot(createLocalSnapshot(draft));
-    setAnalysisState('fresh');
+    void schedulerRef.current?.flush(draft);
   }
 
   function handleLoadSample() {
-    setDraft(sampleDraft);
-    setAnalysisState('stale');
+    queueDraftAnalysis(sampleDraft);
   }
 
   function handleClear() {
-    setDraft('');
-    setAnalysisState('stale');
+    queueDraftAnalysis('');
   }
 
   return (

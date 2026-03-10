@@ -8,10 +8,21 @@ type WorkspaceSnapshotProps = {
 };
 
 export function WorkspaceSnapshot({ snapshot, analysisState, readyMs }: WorkspaceSnapshotProps) {
+  const statusMessage =
+    analysisState === 'queued'
+      ? 'Background analysis is queued for your latest draft.'
+      : analysisState === 'running'
+        ? 'Analysis is running for your latest draft.'
+        : analysisState === 'error'
+          ? 'Background analysis failed. Refresh to try again.'
+          : analysisState === 'fresh'
+            ? 'Snapshot is current.'
+            : 'Draft changed since the last snapshot.';
+
   return (
     <div className="snapshot-stack">
       <div className="status-strip" aria-live="polite">
-        {analysisState === 'fresh' ? 'Snapshot is current.' : 'Draft changed. Run a fresh local snapshot.'}
+        {statusMessage}
       </div>
 
       <div className="snapshot-summary">

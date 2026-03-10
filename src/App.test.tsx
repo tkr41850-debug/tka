@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 import { sampleDraft } from './features/workspace/data/sampleDraft';
 import { createLocalSnapshot, formatSnapshotSummary } from './features/workspace/lib/createLocalSnapshot';
@@ -96,16 +96,20 @@ describe('App', () => {
     expect(screen.getByText(initialSummary)).toBeInTheDocument();
     expect(workerClientMocks.analyze).not.toHaveBeenCalled();
 
-    await vi.advanceTimersByTimeAsync(300);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
 
     expect(workerClientMocks.analyze).toHaveBeenCalledTimes(1);
     expect(screen.getByText(/analysis is running for your latest draft/i)).toBeInTheDocument();
 
-    const queuedRequest = workerClientMocks.pending.get(1)?.request;
+    const queuedRequest = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest | undefined;
     expect(queuedRequest?.draft).toBe(nextDraft);
 
-    workerClientMocks.pending.get(1)?.resolve(createJobResult(queuedRequest as AnalysisJobRequest));
-    await flushPromises();
+    await act(async () => {
+      workerClientMocks.pending.get(queuedRequest?.requestId ?? 0)?.resolve(createJobResult(queuedRequest as AnalysisJobRequest));
+      await flushPromises();
+    });
 
     expect(screen.getByText(nextSummary)).toBeInTheDocument();
     expect(screen.getByText(/snapshot is current/i)).toBeInTheDocument();
