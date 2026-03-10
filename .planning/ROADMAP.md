@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Local Workspace Foundation** - Fast static shell for one local text source and no-cloud analysis entry. (completed 2026-03-09)
 - [x] **Phase 2: Responsive Analysis Loop** - Background browser-local analysis refreshes without blocking writing. (completed 2026-03-10)
-- [ ] **Phase 3: Core Findings** - Initial rule pack returns prioritized technical-writing issues.
+- [x] **Phase 3: Core Findings** - Initial rule pack returns prioritized technical-writing issues. (completed 2026-03-10)
 - [ ] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits.
 - [ ] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases.
 - [ ] **Phase 6: Trustworthy First-Run Access** - Tutorial, accessibility, and per-warning dismissals make the app usable and trustworthy.
@@ -57,7 +57,11 @@ Plans:
   2. User sees overly long sentences and overly long paragraphs flagged using the app's active default limits.
   3. User sees likely passive-voice and tense-drift warnings when the current draft departs from the app's default guidance.
   4. User sees wordy or filler phrasing flagged as clarity issues in the prioritized review list.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] `03-01-PLAN.md` - Build the shared draft-analysis core with deterministic findings for long sentences, long paragraphs, and filler phrases.
+- [ ] `03-02-PLAN.md` - Add conservative passive-voice and tense-drift heuristics plus aggregate ranking coverage.
+- [ ] `03-03-PLAN.md` - Wire prioritized findings into the worker-backed UI and verify the review list end to end.
 
 ### Phase 4: Contextual Review and Guidance
 **Goal**: Users can inspect each finding in context and act on supported guidance safely.
@@ -110,7 +114,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 |-------|----------------|--------|-----------|
 | 1. Local Workspace Foundation | 2/2 | Complete | 2026-03-09 |
 | 2. Responsive Analysis Loop | 2/2 | Complete | 2026-03-10 |
-| 3. Core Findings | 0/TBD | Not started | - |
+| 3. Core Findings | 3/3 | Complete | 2026-03-10 |
 | 4. Contextual Review and Guidance | 0/TBD | Not started | - |
 | 5. Rule Tuning and Custom Detection | 0/TBD | Not started | - |
 | 6. Trustworthy First-Run Access | 0/TBD | Not started | - |

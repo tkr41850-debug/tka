@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { sampleDraft } from './features/workspace/data/sampleDraft';
 import { WorkspaceEditor } from './features/workspace/components/WorkspaceEditor';
 import { WorkspaceSnapshot } from './features/workspace/components/WorkspaceSnapshot';
-import { createLocalSnapshot } from './features/workspace/lib/createLocalSnapshot';
+import { analyzeDraft } from './features/analysis/lib/analyzeDraft';
 import type { AnalysisState } from './features/workspace/types';
 import { getReadyLatencyMs } from './lib/bootMetrics';
 import { createAnalysisWorkerClient } from './features/analysis/lib/createAnalysisWorkerClient';
@@ -10,7 +10,7 @@ import { createAnalysisScheduler } from './features/analysis/lib/createAnalysisS
 
 export default function App() {
   const [draft, setDraft] = useState(sampleDraft);
-  const [snapshot, setSnapshot] = useState(() => createLocalSnapshot(sampleDraft));
+  const [analysis, setAnalysis] = useState(() => analyzeDraft(sampleDraft));
   const [analysisState, setAnalysisState] = useState<AnalysisState>('fresh');
   const [readyMs] = useState(() => getReadyLatencyMs());
   const schedulerRef = useRef<ReturnType<typeof createAnalysisScheduler> | null>(null);
@@ -20,7 +20,7 @@ export default function App() {
     const scheduler = createAnalysisScheduler({
       client,
       onResult: (result) => {
-        setSnapshot(result.snapshot);
+        setAnalysis(result.analysis);
       },
       onStateChange: (lifecycle) => {
         setAnalysisState(lifecycle.state);
@@ -64,9 +64,9 @@ export default function App() {
           <div>
             <h1>Technical Writing Assistant</h1>
             <p className="hero-text">
-              Keep writing while browser-local analysis refreshes in the background. This loop keeps the latest
-              accepted snapshot visible, never sends text off-device, and makes freshness explicit before you trust
-              the result.
+          Keep writing while browser-local analysis refreshes in the background. This loop keeps the latest
+          accepted review visible, never sends text off-device, and makes freshness explicit before you trust the
+          result.
             </p>
           </div>
 
@@ -108,7 +108,7 @@ export default function App() {
             <p className="panel-meta">Queued, running, current</p>
           </div>
 
-          <WorkspaceSnapshot snapshot={snapshot} analysisState={analysisState} readyMs={readyMs} />
+          <WorkspaceSnapshot analysis={analysis} analysisState={analysisState} readyMs={readyMs} />
         </aside>
       </main>
     </div>

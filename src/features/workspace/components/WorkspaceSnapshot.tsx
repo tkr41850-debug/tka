@@ -1,13 +1,19 @@
 import { formatSnapshotSummary } from '../lib/createLocalSnapshot';
-import type { AnalysisState, LocalSnapshot } from '../types';
+import type { DraftAnalysis } from '../../analysis/types';
+import type { AnalysisState } from '../types';
 
 type WorkspaceSnapshotProps = {
-  snapshot: LocalSnapshot;
+  analysis: DraftAnalysis;
   analysisState: AnalysisState;
   readyMs: number;
 };
 
-export function WorkspaceSnapshot({ snapshot, analysisState, readyMs }: WorkspaceSnapshotProps) {
+function formatFindingConfidence(confidence: DraftAnalysis['findings'][number]['confidence']) {
+  return confidence === 'heuristic' ? 'Likely' : 'Direct';
+}
+
+export function WorkspaceSnapshot({ analysis, analysisState, readyMs }: WorkspaceSnapshotProps) {
+  const { snapshot, findings } = analysis;
   const statusLabel = analysisState === 'fresh' ? 'Current' : analysisState === 'error' ? 'Needs refresh' : analysisState;
   const statusMessage =
     analysisState === 'queued'
@@ -38,8 +44,8 @@ export function WorkspaceSnapshot({ snapshot, analysisState, readyMs }: Workspac
         <h3>{formatSnapshotSummary(snapshot)}</h3>
         <p className="snapshot-freshness">{freshnessCopy}</p>
         <p>
-          This phase keeps analysis intentionally lightweight so the product can prove a browser-local handoff
-          before rule warnings and rewrites arrive in later milestones.
+          This phase adds a first-pass review list while keeping every check local to the browser and every
+          freshness state explicit.
         </p>
       </div>
 
@@ -61,6 +67,35 @@ export function WorkspaceSnapshot({ snapshot, analysisState, readyMs }: Workspac
           <strong>{snapshot.readingMinutes} min</strong>
         </article>
       </div>
+
+      <section className="findings-panel" aria-labelledby="core-findings-heading">
+        <div className="findings-header">
+          <div>
+            <p className="snapshot-label">Core findings</p>
+            <h3 id="core-findings-heading">Prioritized review</h3>
+          </div>
+          <p className="panel-meta">{findings.length === 0 ? 'Clean pass' : `${findings.length} issue${findings.length === 1 ? '' : 's'}`}</p>
+        </div>
+
+        {findings.length === 0 ? (
+          <p className="findings-empty">No core findings detected in the current draft.</p>
+        ) : (
+          <ol className="findings-list" aria-label="prioritized findings">
+            {findings.map((finding) => (
+              <li key={`${finding.ruleId}-${finding.location.start}-${finding.location.end}`} className={`finding finding-${finding.severity}`}>
+                <div className="finding-topline">
+                  <span className="finding-severity">{finding.severity}</span>
+                  <strong>{finding.ruleLabel}</strong>
+                  <span className="finding-location">{finding.location.label}</span>
+                </div>
+                <p className="finding-explanation">{finding.explanation}</p>
+                <p className="finding-meta">{formatFindingConfidence(finding.confidence)} confidence match</p>
+                <blockquote>{finding.matchedText}</blockquote>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
 
       <ul className="note-list">
         <li>Nothing leaves this browser tab.</li>

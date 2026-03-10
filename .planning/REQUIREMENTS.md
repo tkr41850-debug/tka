@@ -17,7 +17,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Review
 
 - [ ] **REVW-01**: User can see inline highlights or underlines on the exact text spans that have detected issues.
-- [ ] **REVW-02**: User can review detected issues in a prioritized list that shows severity, rule name, and location.
+- [x] **REVW-02**: User can review detected issues in a prioritized list that shows severity, rule name, and location.
 - [ ] **REVW-03**: User can move from an issue-list entry to the matching text and back.
 - [ ] **REVW-04**: User can dismiss an individual warning in the current text without disabling the whole rule.
 
@@ -36,12 +36,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Clarity and Readability
 
-- [ ] **CLAR-01**: User can detect sentences that exceed a configured maximum word count.
-- [ ] **CLAR-02**: User can detect paragraphs that exceed a configured maximum sentence count.
-- [ ] **CLAR-03**: User can detect likely passive-voice constructions.
-- [ ] **CLAR-04**: User can detect likely tense drift away from the configured tense guidance.
+- [x] **CLAR-01**: User can detect sentences that exceed a configured maximum word count.
+- [x] **CLAR-02**: User can detect paragraphs that exceed a configured maximum sentence count.
+- [x] **CLAR-03**: User can detect likely passive-voice constructions.
+- [x] **CLAR-04**: User can detect likely tense drift away from the configured tense guidance.
 - [ ] **CLAR-05**: User can detect jargon or overly complex wording and see simpler alternatives when available.
-- [ ] **CLAR-06**: User can detect wordy or filler phrasing supported by the local rule pack.
+- [x] **CLAR-06**: User can detect wordy or filler phrasing supported by the local rule pack.
 - [ ] **CLAR-07**: User can detect occurrences of custom banned phrases.
 
 ### Local Persistence
@@ -99,7 +99,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WORK-03 | Phase 2 | Complete |
 | WORK-04 | Phase 2 | Complete |
 | REVW-01 | Phase 4 | Pending |
-| REVW-02 | Phase 3 | Pending |
+| REVW-02 | Phase 3 | Complete |
 | REVW-03 | Phase 4 | Pending |
 | REVW-04 | Phase 6 | Pending |
 | GUID-01 | Phase 4 | Pending |
@@ -109,12 +109,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RULE-02 | Phase 5 | Pending |
 | RULE-03 | Phase 5 | Pending |
 | RULE-04 | Phase 7 | Pending |
-| CLAR-01 | Phase 3 | Pending |
-| CLAR-02 | Phase 3 | Pending |
-| CLAR-03 | Phase 3 | Pending |
-| CLAR-04 | Phase 3 | Pending |
+| CLAR-01 | Phase 3 | Complete |
+| CLAR-02 | Phase 3 | Complete |
+| CLAR-03 | Phase 3 | Complete |
+| CLAR-04 | Phase 3 | Complete |
 | CLAR-05 | Phase 4 | Pending |
-| CLAR-06 | Phase 3 | Pending |
+| CLAR-06 | Phase 3 | Complete |
 | CLAR-07 | Phase 5 | Pending |
 | SAVE-01 | Phase 7 | Pending |
 | SAVE-02 | Phase 7 | Pending |
@@ -130,4 +130,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-08*
-*Last updated: 2026-03-10 after Phase 2 plan 02 execution and verification*
+*Last updated: 2026-03-10 after Phase 3 execution and verification*

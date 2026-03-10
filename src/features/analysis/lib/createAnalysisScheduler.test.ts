@@ -1,4 +1,5 @@
 import type { AnalysisJobRequest, AnalysisJobResult, AnalysisLifecycle } from '../types';
+import { analyzeDraft } from './analyzeDraft';
 import { createAnalysisScheduler } from './createAnalysisScheduler';
 
 type DeferredResult = {
@@ -39,13 +40,7 @@ function createJobResult(request: AnalysisJobRequest): AnalysisJobResult {
     requestId: request.requestId,
     queuedAt: request.queuedAt,
     completedAt: request.queuedAt + 50,
-    snapshot: {
-      characters: request.draft.length,
-      words: 3,
-      sentences: 1,
-      paragraphs: 1,
-      readingMinutes: 1,
-    },
+    analysis: analyzeDraft(request.draft),
   };
 }
 

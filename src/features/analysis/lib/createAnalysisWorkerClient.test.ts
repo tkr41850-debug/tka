@@ -4,6 +4,7 @@ import type {
   AnalysisJobResponse,
   AnalysisJobResult,
 } from '../types';
+import { analyzeDraft } from './analyzeDraft';
 import { AnalysisWorkerClientError, createAnalysisWorkerClient } from './createAnalysisWorkerClient';
 
 type WorkerEvents = {
@@ -91,13 +92,7 @@ function createJobResult(request: AnalysisJobRequest): AnalysisJobResult {
     requestId: request.requestId,
     queuedAt: request.queuedAt,
     completedAt: request.queuedAt + 20,
-    snapshot: {
-      characters: request.draft.length,
-      words: 2,
-      sentences: 1,
-      paragraphs: 1,
-      readingMinutes: 1,
-    },
+    analysis: analyzeDraft(request.draft),
   };
 }
 

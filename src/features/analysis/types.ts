@@ -2,6 +2,35 @@ import type { AnalysisState, LocalSnapshot } from '../workspace/types';
 
 export type { AnalysisState };
 
+export type FindingSeverity = 'high' | 'medium' | 'low';
+
+export type FindingConfidence = 'deterministic' | 'heuristic';
+
+export type DraftFindingLocation = {
+  start: number;
+  end: number;
+  excerpt: string;
+  label: string;
+  sentenceNumber?: number;
+  paragraphNumber?: number;
+};
+
+export type DraftFinding = {
+  ruleId: string;
+  ruleLabel: string;
+  severity: FindingSeverity;
+  confidence: FindingConfidence;
+  explanation: string;
+  matchedText: string;
+  location: DraftFindingLocation;
+  rulePriority: number;
+};
+
+export type DraftAnalysis = {
+  snapshot: LocalSnapshot;
+  findings: DraftFinding[];
+};
+
 export type AnalysisJobRequest = {
   requestId: number;
   draft: string;
@@ -18,7 +47,7 @@ export type AnalysisJobResult = {
   requestId: number;
   queuedAt: number;
   completedAt: number;
-  snapshot: LocalSnapshot;
+  analysis: DraftAnalysis;
 };
 
 export type AnalysisJobError = {

@@ -7,3 +7,5 @@ export type LocalSnapshot = {
   paragraphs: number;
   readingMinutes: number;
 };
+
+export type FindingTone = 'deterministic' | 'heuristic';

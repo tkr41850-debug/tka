@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { createLocalSnapshot } from '../../workspace/lib/createLocalSnapshot';
+import { analyzeDraft } from '../lib/analyzeDraft';
 import type { AnalysisJobError, AnalysisJobRequest, AnalysisJobResult, AnalysisWorkerError } from '../types';
 
 declare const self: DedicatedWorkerGlobalScope;
@@ -27,7 +27,7 @@ self.onmessage = (event: MessageEvent<AnalysisJobRequest>) => {
       requestId: request.requestId,
       queuedAt: request.queuedAt,
       completedAt: Date.now(),
-      snapshot: createLocalSnapshot(request.draft),
+      analysis: analyzeDraft(request.draft),
     };
 
     self.postMessage(response);

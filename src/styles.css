@@ -17,6 +17,9 @@
   --fresh-line: rgba(74, 128, 92, 0.22);
   --error-bg: rgba(163, 61, 44, 0.12);
   --error-line: rgba(163, 61, 44, 0.26);
+  --finding-high: #9b3e20;
+  --finding-medium: #8b5f19;
+  --finding-low: #4b6c58;
   --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
   --font-body: 'Trebuchet MS', 'Gill Sans', 'Avenir Next', 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'Lucida Console', 'Courier New', monospace;
@@ -357,6 +360,107 @@ button:focus-visible,
   font-size: 1.9rem;
 }
 
+.findings-panel {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(97, 71, 47, 0.1);
+  border-radius: 1.15rem;
+  background: rgba(255, 252, 246, 0.92);
+}
+
+.findings-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 0.85rem;
+}
+
+.findings-header h3 {
+  margin-top: 0.35rem;
+  font-size: 1.4rem;
+}
+
+.findings-empty,
+.finding-explanation,
+.finding-meta,
+.finding-location,
+.finding blockquote {
+  color: var(--ink-soft);
+}
+
+.findings-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.finding {
+  padding: 0.9rem 0.95rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(97, 71, 47, 0.12);
+  background: rgba(255, 249, 240, 0.92);
+}
+
+.finding-high {
+  border-color: rgba(155, 62, 32, 0.22);
+}
+
+.finding-medium {
+  border-color: rgba(139, 95, 25, 0.2);
+}
+
+.finding-low {
+  border-color: rgba(75, 108, 88, 0.2);
+}
+
+.finding-topline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.finding-severity {
+  display: inline-flex;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(255, 248, 238, 0.94);
+}
+
+.finding-high .finding-severity {
+  color: var(--finding-high);
+}
+
+.finding-medium .finding-severity {
+  color: var(--finding-medium);
+}
+
+.finding-low .finding-severity {
+  color: var(--finding-low);
+}
+
+.finding-location,
+.finding-meta,
+.finding-explanation,
+.findings-empty {
+  margin: 0.5rem 0 0;
+}
+
+.finding blockquote {
+  margin: 0.65rem 0 0;
+  padding-left: 0.8rem;
+  border-left: 3px solid rgba(181, 82, 43, 0.18);
+  font-family: var(--font-display);
+  line-height: 1.6;
+}
+
 .note-list {
   margin: 0;
   padding-left: 1.2rem;
@@ -405,6 +509,11 @@ button:focus-visible,
 
   .metric-grid {
     grid-template-columns: 1fr;
+  }
+
+  .findings-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .workspace-input {
