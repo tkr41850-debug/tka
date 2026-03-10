@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import App from './App';
 import { analyzeDraft } from './features/analysis/lib/analyzeDraft';
 import { DEFAULT_ANALYSIS_SETTINGS } from './features/analysis/lib/defaultAnalysisSettings';
+import { saveWorkspacePersistence } from './features/workspace/lib/browserPersistence';
 import { sampleDraft } from './features/workspace/data/sampleDraft';
 import { formatSnapshotSummary } from './features/workspace/lib/createLocalSnapshot';
 import type { AnalysisJobRequest, AnalysisJobResult } from './features/analysis/types';
@@ -69,6 +70,7 @@ async function flushPromises() {
 describe('App', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    window.localStorage.clear();
     workerClientMocks.pending.clear();
     workerClientMocks.analyze.mockClear();
     workerClientMocks.dispose.mockClear();
@@ -384,7 +386,7 @@ describe('App', () => {
 
     fireEvent.click(customPhraseButton as HTMLElement);
 
-    expect(screen.getByText(/comes from your current session list/i)).toBeInTheDocument();
+    expect(screen.getByText(/comes from your saved same-browser rule list/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /remove/i }));
 
@@ -451,7 +453,7 @@ describe('App', () => {
     fireEvent.click(within(list).getAllByRole('button', { name: /dismiss warning for complex wording/i })[0]);
 
     expect(within(screen.getByRole('list', { name: /prioritized findings/i })).getAllByRole('listitem')).toHaveLength(2);
-    expect(screen.getByText(/1 warning hidden for this session only/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 warning hidden on this same browser only/i)).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /complex wording rule/i })).toBeChecked();
     expect(screen.getByRole('status')).toHaveTextContent(/rule stays enabled/i);
 
@@ -491,5 +493,160 @@ describe('App', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /apply suggestion/i }));
     expect(screen.getByRole('status')).toHaveTextContent(/suggestion applied for complex wording/i);
+  });
+
+  it('restores same-browser settings, tutorial state, and prunes stale dismissals', () => {
+    const restoredSettings = {
+      ...DEFAULT_ANALYSIS_SETTINGS,
+      enabledRules: {
+        ...DEFAULT_ANALYSIS_SETTINGS.enabledRules,
+        'filler-phrase': false,
+      },
+      thresholds: {
+        sentenceWordLimit: 60,
+        paragraphSentenceLimit: 4,
+      },
+      customBannedPhrases: ['blocker'],
+    };
+    saveWorkspacePersistence({
+      analysisSettings: restoredSettings,
+      dismissedFindingKeys: ['missing-key'],
+      tutorial: {
+        completed: true,
+        isOpen: false,
+      },
+      draftRecoveryEnabled: false,
+      savedDraft: null,
+      presets: [
+        {
+          id: 'preset-1',
+          name: 'Team review',
+          updatedAt: '2026-03-10T10:00:00.000Z',
+          settings: restoredSettings,
+        },
+      ],
+    });
+
+    render(<App />);
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /wordy phrase rule/i })).not.toBeChecked();
+    expect(screen.getByRole('spinbutton', { name: /sentence word limit/i })).toHaveValue(60);
+    expect(screen.getByText(/1 preset saved locally/i)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(/local preferences restored on this browser/i);
+    expect(screen.queryByText(/warning hidden on this same browser only/i)).not.toBeInTheDocument();
+  });
+
+  it('saves, applies, renames, and deletes local presets through the settings panel', async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole('button', { name: /skip tutorial/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /wordy phrase rule/i }));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    let request = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+    await act(async () => {
+      workerClientMocks.pending.get(request.requestId)?.resolve(createJobResult(request));
+      await flushPromises();
+    });
+
+    fireEvent.change(screen.getByRole('spinbutton', { name: /sentence word limit/i }), { target: { value: '40' } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    request = workerClientMocks.analyze.mock.calls[1]?.[0] as AnalysisJobRequest;
+    await act(async () => {
+      workerClientMocks.pending.get(request.requestId)?.resolve(createJobResult(request));
+      await flushPromises();
+    });
+
+    fireEvent.change(screen.getByRole('textbox', { name: /preset name/i }), { target: { value: 'Team review' } });
+    fireEvent.click(screen.getByRole('button', { name: /save preset/i }));
+
+    expect(screen.getByRole('button', { name: /apply preset/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('checkbox', { name: /wordy phrase rule/i }));
+    fireEvent.change(screen.getByRole('spinbutton', { name: /sentence word limit/i }), { target: { value: '28' } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    request = workerClientMocks.analyze.mock.calls[2]?.[0] as AnalysisJobRequest;
+    await act(async () => {
+      workerClientMocks.pending.get(request.requestId)?.resolve(createJobResult(request));
+      await flushPromises();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /apply preset/i }));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    request = workerClientMocks.analyze.mock.calls[3]?.[0] as AnalysisJobRequest;
+    expect(request.settings.enabledRules['filler-phrase']).toBe(false);
+    expect(request.settings.thresholds.sentenceWordLimit).toBe(40);
+
+    fireEvent.click(screen.getByRole('button', { name: /rename preset/i }));
+    fireEvent.change(screen.getByRole('textbox', { name: /rename preset team review/i }), { target: { value: 'Release sweep' } });
+    fireEvent.click(screen.getByRole('button', { name: /save name/i }));
+
+    expect(screen.getAllByText(/release sweep/i).length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole('button', { name: /delete preset/i }));
+    expect(screen.queryByRole('button', { name: /apply preset/i })).not.toBeInTheDocument();
+  });
+
+  it('keeps draft recovery opt-in and makes restore or discard explicit on return visits', async () => {
+    const recoveredDraft = 'Restore this saved draft on the same browser.';
+    const firstRender = render(<App />);
+
+    fireEvent.click(screen.getByRole('button', { name: /skip tutorial/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /enable draft recovery/i }));
+    fireEvent.change(screen.getByLabelText(/single document workspace/i), { target: { value: recoveredDraft } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    let request = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+    await act(async () => {
+      workerClientMocks.pending.get(request.requestId)?.resolve(createJobResult(request));
+      await flushPromises();
+    });
+
+    firstRender.unmount();
+    workerClientMocks.pending.clear();
+    workerClientMocks.analyze.mockClear();
+
+    const secondRender = render(<App />);
+
+    expect(screen.getByRole('button', { name: /restore saved draft/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/single document workspace/i)).toHaveValue(sampleDraft);
+
+    fireEvent.click(screen.getByRole('button', { name: /restore saved draft/i }));
+    expect(screen.getByLabelText(/single document workspace/i)).toHaveValue(recoveredDraft);
+
+    request = workerClientMocks.analyze.mock.calls[0]?.[0] as AnalysisJobRequest;
+    expect(request.draft).toBe(recoveredDraft);
+
+    secondRender.unmount();
+    workerClientMocks.pending.clear();
+    workerClientMocks.analyze.mockClear();
+
+    const thirdRender = render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /discard saved draft/i }));
+    expect(screen.queryByRole('button', { name: /restore saved draft/i })).not.toBeInTheDocument();
+
+    thirdRender.unmount();
+
+    render(<App />);
+    expect(screen.queryByRole('button', { name: /restore saved draft/i })).not.toBeInTheDocument();
   });
 });

@@ -5,16 +5,16 @@
 See: `.planning/PROJECT.md` (updated 2026-03-08)
 
 **Core value:** Users can paste or type text into a single web page and immediately get useful, local-only feedback that helps them write more clearly.
-**Current focus:** Phase 7 - Local Continuity and Presets
+**Current focus:** Phase 7 complete - local continuity, presets, and draft recovery shipped
 
 ## Current Position
 
 Phase: 7 of 7 (Local Continuity and Presets)
-Plan: 0 of TBD in current phase
-Status: Phase 6 complete - Phase 7 ready for planning
-Last activity: 2026-03-10 - Completed Phase 6 trustworthy first-run access work
+Plan: 4 of 4 planned in current phase
+Status: Phase 7 complete - ready for final verification/closeout
+Last activity: 2026-03-10 - Executed Phase 7 local continuity and presets work
 
-Progress: [#########-] 86%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
@@ -61,19 +61,21 @@ Recent decisions affecting current work:
 - [Phase 03-core-findings]: Label passive voice and tense drift as likely heuristic warnings so the first rule pack stays conservative and trustworthy.
 - [Phase 6] Keep tutorial completion, dismissals, and trust announcements session-only until persistence work begins in Phase 7.
 - [Phase 6] Filter dismissed warnings in the app shell instead of mutating analyzer output so worker results stay deterministic.
+- [Phase 7] Persist only browser-local source state and rerun analysis instead of saving derived worker output.
+- [Phase 7] Keep draft recovery opt-in and require an explicit restore-or-discard decision before replacing the current workspace.
+- [Phase 7] Reuse normalized analysis settings for saved presets so preset apply stays aligned with live analysis behavior.
 
 ### Pending Todos
 
-- Plan Phase 7 local continuity and presets work on top of the completed trust-state, tutorial, and dismissal workflow.
+- Prepare Phase 7 verification/closeout artifacts now that local continuity and presets are complete.
 
 ### Blockers/Concerns
 
 - [Phase 2] Validate whether the 300 ms starting debounce still feels fast on long drafts once worker wiring is live.
-- [Phase 7] Recovery policy should stay explicit so local draft restore does not surprise privacy-sensitive users.
 - [Future] Optional WASM remains out of v1 unless performance measurements justify it.
 
 ## Session Continuity
 
 Last session: 2026-03-10 08:06
-Stopped at: Completed `06-trustworthy-first-run-access`
+Stopped at: Completed `07-local-continuity-and-presets`
 Resume file: `.planning/ROADMAP.md`

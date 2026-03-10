@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import type { AnalysisSettings, AnalysisRuleId, DraftFinding, FindingSuggestion } from './features/analysis/types';
+import type {
+  AnalysisSettings,
+  AnalysisRuleId,
+  DraftFinding,
+  FindingSuggestion,
+  SavedDraftRecovery,
+  SavedRulePreset,
+} from './features/analysis/types';
 import { sampleDraft } from './features/workspace/data/sampleDraft';
 import { WorkspaceEditor } from './features/workspace/components/WorkspaceEditor';
 import { ReviewDetailPanel } from './features/workspace/components/ReviewDetailPanel';
@@ -21,6 +28,10 @@ import {
 } from './features/workspace/lib/applySuggestedRewrite';
 import { createDismissedFindingKey } from './features/workspace/lib/createDismissedFindingKey';
 import { createAnnouncementMessage } from './features/workspace/lib/createAnnouncementMessage';
+import {
+  loadWorkspacePersistence,
+  saveWorkspacePersistence,
+} from './features/workspace/lib/browserPersistence';
 
 const TUTORIAL_STEPS = [
   {
@@ -40,17 +51,56 @@ const TUTORIAL_STEPS = [
   },
 ] as const;
 
+function createSavedDraftRecord(content: string): SavedDraftRecovery | null {
+  if (!content.trim() || content === sampleDraft) {
+    return null;
+  }
+
+  return {
+    content,
+    savedAt: new Date().toISOString(),
+    characters: content.length,
+    words: content.trim().split(/\s+/).length,
+  };
+}
+
+function createPresetId() {
+  return `preset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function normalizePresetName(name: string) {
+  return name.trim().replace(/\s+/g, ' ');
+}
+
 export default function App() {
+  const initialPersistenceRef = useRef(loadWorkspacePersistence());
+  const initialPersistence = initialPersistenceRef.current;
+  const initialPendingRecoveredDraft =
+    initialPersistence.draftRecoveryEnabled &&
+    initialPersistence.savedDraft &&
+    initialPersistence.savedDraft.content !== sampleDraft
+      ? initialPersistence.savedDraft
+      : null;
+
   const [draft, setDraft] = useState(sampleDraft);
-  const [analysisSettings, setAnalysisSettings] = useState<AnalysisSettings>(() => DEFAULT_ANALYSIS_SETTINGS);
-  const [analysis, setAnalysis] = useState(() => analyzeDraft(sampleDraft, DEFAULT_ANALYSIS_SETTINGS));
+  const [analysisSettings, setAnalysisSettings] = useState<AnalysisSettings>(() => initialPersistence.analysisSettings);
+  const [analysis, setAnalysis] = useState(() => analyzeDraft(sampleDraft, initialPersistence.analysisSettings));
   const [analysisState, setAnalysisState] = useState<AnalysisState>('fresh');
   const [activeFindingId, setActiveFindingId] = useState<string | null>(null);
   const [pendingSelection, setPendingSelection] = useState<RewriteSelection | null>(null);
   const [undoRewrite, setUndoRewrite] = useState<RewriteUndoSnapshot | null>(null);
-  const [dismissedFindingKeys, setDismissedFindingKeys] = useState<Set<string>>(() => new Set());
+  const [dismissedFindingKeys, setDismissedFindingKeys] = useState<Set<string>>(
+    () => new Set(initialPendingRecoveredDraft ? [] : initialPersistence.dismissedFindingKeys),
+  );
+  const [savedPresets, setSavedPresets] = useState<SavedRulePreset[]>(() => initialPersistence.presets);
+  const [draftRecoveryEnabled, setDraftRecoveryEnabled] = useState(initialPersistence.draftRecoveryEnabled);
+  const [pendingRecoveredDraft, setPendingRecoveredDraft] = useState<SavedDraftRecovery | null>(initialPendingRecoveredDraft);
+  const [pendingRecoveredDismissals, setPendingRecoveredDismissals] = useState<string[]>(
+    initialPendingRecoveredDraft ? initialPersistence.dismissedFindingKeys : [],
+  );
   const [announcementMessage, setAnnouncementMessage] = useState('');
-  const [isTutorialOpen, setIsTutorialOpen] = useState(true);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(initialPersistence.tutorial.isOpen);
+  const [tutorialCompleted, setTutorialCompleted] = useState(initialPersistence.tutorial.completed);
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
   const [readyMs] = useState(() => getReadyLatencyMs());
   const schedulerRef = useRef<ReturnType<typeof createAnalysisScheduler> | null>(null);
@@ -80,6 +130,25 @@ export default function App() {
       schedulerRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const restoredCount = [
+      JSON.stringify(initialPersistence.analysisSettings) !== JSON.stringify(DEFAULT_ANALYSIS_SETTINGS) ? 'settings' : null,
+      initialPendingRecoveredDraft ? 'draft recovery prompt' : null,
+      initialPersistence.presets.length > 0 ? 'presets' : null,
+      initialPersistence.tutorial.completed ? 'tutorial preference' : null,
+      !initialPendingRecoveredDraft && initialPersistence.dismissedFindingKeys.length > 0 ? 'dismissed warnings' : null,
+    ].filter((value): value is string => value !== null).length;
+
+    if (restoredCount > 0) {
+      setAnnouncementMessage(
+        createAnnouncementMessage({
+          type: 'session-restored',
+          count: restoredCount,
+        }),
+      );
+    }
+  }, [initialPendingRecoveredDraft, initialPersistence]);
 
   function queueDraftAnalysis(nextDraft: string, nextSettings = analysisSettings) {
     setDraft(nextDraft);
@@ -213,6 +282,7 @@ export default function App() {
   }
 
   function closeTutorial() {
+    setTutorialCompleted(true);
     setIsTutorialOpen(false);
     setAnnouncementMessage(createAnnouncementMessage({ type: 'tutorial-closed' }));
   }
@@ -255,6 +325,117 @@ export default function App() {
     }));
   }
 
+  function handleSavePreset(name: string) {
+    const normalizedName = normalizePresetName(name);
+
+    if (!normalizedName) {
+      return { ok: false as const, reason: 'blank' as const };
+    }
+
+    if (savedPresets.some((preset) => preset.name.toLowerCase() === normalizedName.toLowerCase())) {
+      return { ok: false as const, reason: 'duplicate' as const };
+    }
+
+    const nextPreset: SavedRulePreset = {
+      id: createPresetId(),
+      name: normalizedName,
+      settings: normalizeAnalysisSettings(analysisSettings),
+      updatedAt: new Date().toISOString(),
+    };
+
+    setSavedPresets((current) => [...current, nextPreset]);
+    setAnnouncementMessage(createAnnouncementMessage({ type: 'preset-saved', name: normalizedName }));
+    return { ok: true as const };
+  }
+
+  function handleApplyPreset(presetId: string) {
+    const preset = savedPresets.find((candidate) => candidate.id === presetId);
+
+    if (!preset) {
+      return;
+    }
+
+    const nextSettings = normalizeAnalysisSettings(preset.settings);
+    setUndoRewrite(null);
+    setPendingSelection(null);
+    setAnalysisSettings(nextSettings);
+    schedulerRef.current?.queue(draft, nextSettings);
+    setAnnouncementMessage(createAnnouncementMessage({ type: 'preset-applied', name: preset.name }));
+  }
+
+  function handleRenamePreset(presetId: string, name: string) {
+    const normalizedName = normalizePresetName(name);
+
+    if (!normalizedName) {
+      return { ok: false as const, reason: 'blank' as const };
+    }
+
+    if (savedPresets.some((preset) => preset.id !== presetId && preset.name.toLowerCase() === normalizedName.toLowerCase())) {
+      return { ok: false as const, reason: 'duplicate' as const };
+    }
+
+    setSavedPresets((current) =>
+      current.map((preset) =>
+        preset.id === presetId
+          ? {
+              ...preset,
+              name: normalizedName,
+              updatedAt: new Date().toISOString(),
+            }
+          : preset,
+      ),
+    );
+    setAnnouncementMessage(createAnnouncementMessage({ type: 'preset-renamed', name: normalizedName }));
+    return { ok: true as const };
+  }
+
+  function handleDeletePreset(presetId: string) {
+    const preset = savedPresets.find((candidate) => candidate.id === presetId);
+
+    if (!preset) {
+      return;
+    }
+
+    setSavedPresets((current) => current.filter((candidate) => candidate.id !== presetId));
+    setAnnouncementMessage(createAnnouncementMessage({ type: 'preset-deleted', name: preset.name }));
+  }
+
+  function handleToggleDraftRecovery(enabled: boolean) {
+    setDraftRecoveryEnabled(enabled);
+
+    if (!enabled) {
+      setPendingRecoveredDraft(null);
+      setPendingRecoveredDismissals([]);
+    }
+
+    setAnnouncementMessage(createAnnouncementMessage({ type: enabled ? 'draft-recovery-enabled' : 'draft-recovery-disabled' }));
+  }
+
+  function handleRestoreSavedDraft() {
+    if (!pendingRecoveredDraft) {
+      return;
+    }
+
+    setDismissedFindingKeys(new Set(pendingRecoveredDismissals));
+    setPendingRecoveredDismissals([]);
+    setPendingRecoveredDraft(null);
+    setActiveFindingId(null);
+    setUndoRewrite(null);
+    setPendingSelection(null);
+    setAnnouncementMessage(createAnnouncementMessage({ type: 'draft-restored' }));
+    flushDraftAnalysis(pendingRecoveredDraft.content, analysisSettings);
+  }
+
+  function handleDiscardSavedDraft() {
+    if (!pendingRecoveredDraft) {
+      return;
+    }
+
+    setPendingRecoveredDismissals([]);
+    setPendingRecoveredDraft(null);
+    setAnnouncementMessage(createAnnouncementMessage({ type: 'draft-discarded' }));
+  }
+
   useEffect(() => {
     if (analysisState === 'fresh' && activeFindingId && !visibleFindings.some((finding) => finding.id === activeFindingId)) {
       setActiveFindingId(null);
@@ -290,6 +471,33 @@ export default function App() {
     nextFocus?.focus();
   }, [isTutorialOpen]);
 
+  useEffect(() => {
+    saveWorkspacePersistence({
+      analysisSettings,
+      dismissedFindingKeys: pendingRecoveredDraft ? pendingRecoveredDismissals : Array.from(dismissedFindingKeys),
+      tutorial: {
+        completed: tutorialCompleted,
+        isOpen: isTutorialOpen,
+      },
+      draftRecoveryEnabled,
+      savedDraft:
+        draftRecoveryEnabled
+          ? pendingRecoveredDraft ?? createSavedDraftRecord(draft)
+          : null,
+      presets: savedPresets,
+    });
+  }, [
+    analysisSettings,
+    dismissedFindingKeys,
+    draft,
+    draftRecoveryEnabled,
+    isTutorialOpen,
+    pendingRecoveredDismissals,
+    pendingRecoveredDraft,
+    savedPresets,
+    tutorialCompleted,
+  ]);
+
   return (
     <div className="app-shell">
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
@@ -306,18 +514,18 @@ export default function App() {
       />
 
       <header className="hero-panel panel">
-          <p className="eyebrow">Phase 6 / Trustworthy First-Run Access</p>
+        <p className="eyebrow">Phase 7 / Local Continuity and Presets</p>
         <div className="hero-copy">
           <div>
             <h1>Technical Writing Assistant</h1>
             <p className="hero-text">
-                Start with a short tour, review warnings with explicit trust cues, and dismiss one warning at a time while every background check stays local to this browser.
-              </p>
+              Return on the same browser to pick up your local settings, dismissed warnings, saved presets, and optional draft recovery while every analysis pass stays on-device.
+            </p>
           </div>
 
           <div className="hero-badges" aria-label="foundation status">
             <span className="badge">Single source workspace</span>
-            <span className="badge">No sign-in</span>
+            <span className="badge">Same-browser continuity</span>
             <button ref={tutorialButtonRef} type="button" className="badge badge-button" onClick={() => openTutorial(tutorialButtonRef.current)}>
               Reopen tutorial
             </button>
@@ -343,12 +551,15 @@ export default function App() {
             findings={visibleFindings}
             activeFindingId={activeFindingId}
             pendingSelection={pendingSelection}
+            pendingRecoveredDraft={pendingRecoveredDraft}
             onChange={handleDraftChange}
             onAnalyze={handleAnalyze}
             onClear={handleClear}
             onLoadSample={handleLoadSample}
             onSelectFinding={selectFinding}
             onPendingSelectionHandled={() => setPendingSelection(null)}
+            onRestoreSavedDraft={handleRestoreSavedDraft}
+            onDiscardSavedDraft={handleDiscardSavedDraft}
           />
         </section>
 
@@ -368,6 +579,10 @@ export default function App() {
             activeFindingId={activeFindingId}
             settings={analysisSettings}
             dismissedCount={dismissedFindingKeys.size}
+            presetCount={savedPresets.length}
+            tutorialCompleted={tutorialCompleted}
+            draftRecoveryEnabled={draftRecoveryEnabled}
+            hasRecoverableDraft={pendingRecoveredDraft !== null}
             onSelectFinding={selectFinding}
             onDismissFinding={handleDismissFindingById}
             onRestoreDismissedFindings={handleRestoreDismissedFindings}
@@ -376,10 +591,17 @@ export default function App() {
           <RuleSettingsPanel
             settings={analysisSettings}
             analysisState={analysisState}
+            savedPresets={savedPresets}
+            draftRecoveryEnabled={draftRecoveryEnabled}
             onToggleRule={handleToggleRule}
             onThresholdChange={handleThresholdChange}
             onAddPhrase={handleAddPhrase}
             onRemovePhrase={handleRemovePhrase}
+            onSavePreset={handleSavePreset}
+            onApplyPreset={handleApplyPreset}
+            onRenamePreset={handleRenamePreset}
+            onDeletePreset={handleDeletePreset}
+            onToggleDraftRecovery={handleToggleDraftRecovery}
           />
 
           <ReviewDetailPanel

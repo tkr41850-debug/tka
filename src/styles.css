@@ -581,6 +581,9 @@ button:focus-visible,
 
 .rule-settings-header,
 .rule-threshold-grid,
+.preset-panel,
+.preset-form,
+.preset-list,
 .custom-phrase-panel,
 .custom-phrase-form,
 .custom-phrase-list {
@@ -588,12 +591,14 @@ button:focus-visible,
 }
 
 .rule-settings-list,
+.preset-list,
 .custom-phrase-list {
   display: grid;
   gap: 0.75rem;
 }
 
 .rule-toggle-card,
+.preset-item,
 .custom-phrase-list li {
   display: flex;
   justify-content: space-between;
@@ -612,6 +617,8 @@ button:focus-visible,
 
 .rule-toggle-card input,
 .rule-threshold-field input,
+.preset-form input,
+.preset-rename-form input,
 .custom-phrase-form input {
   accent-color: var(--accent);
 }
@@ -628,6 +635,8 @@ button:focus-visible,
 }
 
 .rule-threshold-field input,
+.preset-form input,
+.preset-rename-form input,
 .custom-phrase-form input {
   width: 100%;
   min-height: 2.9rem;
@@ -639,10 +648,38 @@ button:focus-visible,
   font: inherit;
 }
 
+.preset-form,
+.preset-rename-form,
 .custom-phrase-form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.75rem;
+}
+
+.preset-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.preset-item {
+  flex-direction: column;
+}
+
+.preset-actions,
+.workspace-recovery-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.recovery-strip {
+  border: 1px solid rgba(181, 82, 43, 0.2);
+  background: rgba(255, 242, 225, 0.92);
+}
+
+.continuity-summary {
+  border: 1px solid rgba(97, 71, 47, 0.1);
 }
 
 .custom-phrase-list {
@@ -860,6 +897,8 @@ button:focus-visible,
   }
 
   .rule-threshold-grid,
+  .preset-form,
+  .preset-rename-form,
   .custom-phrase-form {
     grid-template-columns: 1fr;
   }

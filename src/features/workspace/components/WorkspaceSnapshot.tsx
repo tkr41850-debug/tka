@@ -9,6 +9,10 @@ type WorkspaceSnapshotProps = {
   activeFindingId: string | null;
   settings: AnalysisSettings;
   dismissedCount: number;
+  presetCount: number;
+  tutorialCompleted: boolean;
+  draftRecoveryEnabled: boolean;
+  hasRecoverableDraft: boolean;
   onSelectFinding: (findingId: string) => void;
   onDismissFinding: (findingId: string) => void;
   onRestoreDismissedFindings: () => void;
@@ -25,6 +29,10 @@ export function WorkspaceSnapshot({
   activeFindingId,
   settings,
   dismissedCount,
+  presetCount,
+  tutorialCompleted,
+  draftRecoveryEnabled,
+  hasRecoverableDraft,
   onSelectFinding,
   onDismissFinding,
   onRestoreDismissedFindings,
@@ -60,8 +68,7 @@ export function WorkspaceSnapshot({
         <h3>{formatSnapshotSummary(snapshot)}</h3>
         <p className="snapshot-freshness">{freshnessCopy}</p>
         <p>
-          Live review stays local while active rules, length limits, and session-only banned phrases travel with
-          each background refresh.
+          Live review stays local while active rules, length limits, presets, and same-browser continuity travel with each background refresh.
         </p>
       </div>
 
@@ -73,8 +80,18 @@ export function WorkspaceSnapshot({
         </span>
         <span>
           {settings.customBannedPhrases.length === 0
-            ? 'No custom banned phrases in this session.'
+            ? 'No custom banned phrases saved locally yet.'
             : `${settings.customBannedPhrases.length} custom banned phrase${settings.customBannedPhrases.length === 1 ? '' : 's'} active.`}
+        </span>
+      </div>
+
+      <div className="status-strip continuity-summary" aria-label="same browser continuity summary">
+        <span className="analysis-status-label">Same browser continuity</span>
+        <span>
+          {presetCount} preset{presetCount === 1 ? '' : 's'} saved locally. Tutorial {tutorialCompleted ? 'completed' : 'still available'}.
+        </span>
+        <span>
+          Dismissed warnings stay on this browser only. Draft recovery is {draftRecoveryEnabled ? 'enabled' : 'off'}{hasRecoverableDraft ? ' and a saved draft is waiting for review.' : '.'}
         </span>
       </div>
 
@@ -82,7 +99,7 @@ export function WorkspaceSnapshot({
         <div className="status-strip dismissed-summary" aria-label="dismissed warning summary">
           <span className="analysis-status-label">Session dismissals</span>
           <span>
-            {dismissedCount} warning{dismissedCount === 1 ? '' : 's'} hidden for this session only. Their rules stay enabled.
+            {dismissedCount} warning{dismissedCount === 1 ? '' : 's'} hidden on this same browser only. Their rules stay enabled.
           </span>
           <button type="button" className="button-secondary button-inline" onClick={onRestoreDismissedFindings}>
             Restore dismissed warnings

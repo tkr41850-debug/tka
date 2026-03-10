@@ -24,6 +24,40 @@ export type AnalysisSettings = {
   customBannedPhrases: string[];
 };
 
+export type SavedRulePreset = {
+  id: string;
+  name: string;
+  settings: AnalysisSettings;
+  updatedAt: string;
+};
+
+export type SavedDraftRecovery = {
+  content: string;
+  savedAt: string;
+  characters: number;
+  words: number;
+};
+
+export type TutorialContinuity = {
+  completed: boolean;
+  isOpen: boolean;
+};
+
+export type WorkspacePersistence = {
+  analysisSettings: AnalysisSettings;
+  dismissedFindingKeys: string[];
+  tutorial: TutorialContinuity;
+  draftRecoveryEnabled: boolean;
+  savedDraft: SavedDraftRecovery | null;
+  presets: SavedRulePreset[];
+};
+
+export type WorkspacePersistenceEnvelope = {
+  version: 1;
+  savedAt: string;
+  data: WorkspacePersistence;
+};
+
 export type DraftFindingLocation = {
   start: number;
   end: number;

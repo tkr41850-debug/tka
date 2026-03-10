@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import type { DraftFinding } from '../../analysis/types';
+import type { DraftFinding, SavedDraftRecovery } from '../../analysis/types';
 import type { AnalysisState } from '../types';
 import { createHighlightedDraftSegments } from '../lib/createHighlightedDraftSegments';
 
@@ -10,12 +10,15 @@ type WorkspaceEditorProps = {
   findings: DraftFinding[];
   activeFindingId: string | null;
   pendingSelection?: { start: number; end: number } | null;
+  pendingRecoveredDraft: SavedDraftRecovery | null;
   onChange: (value: string) => void;
   onAnalyze: () => void;
   onClear: () => void;
   onLoadSample: () => void;
   onSelectFinding: (findingId: string | null) => void;
   onPendingSelectionHandled: () => void;
+  onRestoreSavedDraft: () => void;
+  onDiscardSavedDraft: () => void;
 };
 
 export function WorkspaceEditor({
@@ -25,12 +28,15 @@ export function WorkspaceEditor({
   findings,
   activeFindingId,
   pendingSelection,
+  pendingRecoveredDraft,
   onChange,
   onAnalyze,
   onClear,
   onLoadSample,
   onSelectFinding,
   onPendingSelectionHandled,
+  onRestoreSavedDraft,
+  onDiscardSavedDraft,
 }: WorkspaceEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const mirrorRef = useRef<HTMLPreElement | null>(null);
@@ -101,6 +107,23 @@ export function WorkspaceEditor({
         <span>{draftCharacters} characters in the active document.</span>
         <span>Keyboard tip: use Tab to move between the review list, rule settings, and rewrite actions.</span>
       </div>
+
+      {pendingRecoveredDraft ? (
+        <div className="status-strip recovery-strip" aria-label="saved draft recovery">
+          <span className="analysis-status-label">Saved locally</span>
+          <span>
+            Restore saved draft from {new Date(pendingRecoveredDraft.savedAt).toLocaleString()} with {pendingRecoveredDraft.characters} characters, or discard it and keep the current workspace.
+          </span>
+          <div className="workspace-recovery-actions">
+            <button type="button" className="button-primary button-inline" onClick={onRestoreSavedDraft}>
+              Restore saved draft
+            </button>
+            <button type="button" className="button-secondary button-inline" onClick={onDiscardSavedDraft}>
+              Discard saved draft
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <label className="workspace-label" htmlFor="workspace-input">
         Single document workspace

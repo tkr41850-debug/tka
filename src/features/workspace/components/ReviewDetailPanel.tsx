@@ -32,7 +32,7 @@ export function ReviewDetailPanel({
           <p>Choose any finding from the review list to jump to the exact span, read why it fired, and use supported guidance.</p>
           {dismissedCount > 0 ? (
             <p>
-              {dismissedCount} warning{dismissedCount === 1 ? '' : 's'} hidden in this session. Restore them when you want the full review back.
+              {dismissedCount} warning{dismissedCount === 1 ? '' : 's'} hidden on this same browser. Restore them when you want the full review back.
             </p>
           ) : null}
         </div>
@@ -65,9 +65,9 @@ export function ReviewDetailPanel({
 
       <p className="review-detail-location">{finding.location.label}</p>
       <p className="review-detail-copy">{finding.explanation}</p>
-      <p className="review-detail-copy">Dismiss warning hides this warning only for the current session. The rule stays enabled.</p>
+      <p className="review-detail-copy">Dismiss warning hides this warning on the same browser only. The rule stays enabled.</p>
       {finding.ruleId === 'custom-banned-phrase' ? (
-        <p className="review-detail-copy">This phrase comes from your current session list, so removing it from rule settings will clear this warning on the next refresh.</p>
+        <p className="review-detail-copy">This phrase comes from your saved same-browser rule list, so removing it from rule settings will clear this warning on the next refresh.</p>
       ) : null}
       <blockquote className="review-detail-quote">{finding.matchedText}</blockquote>
 

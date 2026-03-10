@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 4: Contextual Review and Guidance** - Findings become explorable in place with explanations and safe edits.
 - [x] **Phase 5: Rule Tuning and Custom Detection** - Users can tailor rules, thresholds, and banned phrases. (completed 2026-03-10)
 - [x] **Phase 6: Trustworthy First-Run Access** - Tutorial, accessibility, and per-warning dismissals make the app usable and trustworthy. (completed 2026-03-10)
-- [ ] **Phase 7: Local Continuity and Presets** - Same-browser return flows restore preferences, dismissals, presets, and optional draft recovery.
+- [x] **Phase 7: Local Continuity and Presets** - Same-browser return flows restore preferences, dismissals, presets, and optional draft recovery. (completed 2026-03-10)
 
 ## Phase Details
 
@@ -120,7 +120,13 @@ Plans:
   1. User can save and load local rule presets on the same device.
   2. User sees rule settings, dismissals, and presets restored between visits on the same browser without creating an account.
   3. User can restore the last local draft or session on the same browser when local recovery is enabled.
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [x] `07-01-PLAN.md` - Add versioned browser-local persistence helpers and saved workspace state contracts for settings, dismissals, tutorial progress, presets, and opt-in recovery.
+- [x] `07-02-PLAN.md` - Hydrate and persist return-state behavior so same-browser visits restore preferences, dismissals, tutorial completion, and continuity messaging safely.
+- [x] `07-03-PLAN.md` - Build local preset save, apply, rename, and delete flows inside the existing rule-settings surface.
+- [x] `07-04-PLAN.md` - Add explicit draft-recovery controls and restore prompts, then verify the full continuity flow end to end.
 
 ## Progress
 
@@ -135,4 +141,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Contextual Review and Guidance | 0/3 | Planned | - |
 | 5. Rule Tuning and Custom Detection | 4/4 | Complete | 2026-03-10 |
 | 6. Trustworthy First-Run Access | 4/4 | Complete | 2026-03-10 |
-| 7. Local Continuity and Presets | 0/TBD | Not started | - |
+| 7. Local Continuity and Presets | 4/4 | Complete | 2026-03-10 |
